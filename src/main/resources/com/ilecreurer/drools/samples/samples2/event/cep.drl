@@ -1,0 +1,48 @@
+package com.ilecreurer.drools.samples.sample2.event;
+
+import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
+
+global org.slf4j.Logger LOGGER_DRL
+global com.ilecreurer.drools.samples.sample2.service.DistanceService distanceService
+
+declare PositionEvent
+  @role( event )
+  @timestamp( timestamp )
+  //@duration( callDuration )
+  //@expires( 1h35m )
+  //@expires( 1s )
+end
+
+rule "insertion"
+salience 100
+when
+    $pe : PositionEvent() from entry-point "PositionEventStream"
+then
+    LOGGER_DRL.debug("New PE: {}, {}, {}", $pe.getIdEvent(),
+        $pe.getIdOwner(),
+        $pe.getType());
+end
+
+rule "substitution"
+salience 90
+when
+    $pe : PositionEvent() from entry-point "PositionEventStream"
+    $previousPe : PositionEvent (this.idOwner == $pe.idOwner, this.timestamp < $pe.timestamp) from entry-point "PositionEventStream"
+then
+    LOGGER_DRL.debug("Remove PE: {}, {}, {}", $previousPe.getIdEvent(),
+        $previousPe.getIdOwner(),
+        $previousPe.getType());
+    retract($previousPe);
+end
+
+
+rule "collision"
+salience 80
+when
+    $pe1 : PositionEvent(type == "A") from entry-point "PositionEventStream"
+    $pe2 : PositionEvent(type == "B") from entry-point "PositionEventStream"
+    eval(distanceService.getDistance($pe1, $pe2) < 50)
+then
+    LOGGER_DRL.warn("{} is too close to {}", $pe1.getIdOwner(), $pe2.getIdOwner());
+    //LOGGER_DRL.warn("Found type A", $pe1.getIdEvent());
+end
