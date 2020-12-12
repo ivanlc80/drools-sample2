@@ -1,4 +1,4 @@
-# Springbot Drools stateful sample2
+# Springboot Drools stateful sample2
 
 ## Description
 This is a Springboot project with integrated Drools rule engine.
