@@ -1,38 +1,19 @@
-package com.ilecreurer.drools.samples.sample2.service;
+package com.ilecreurer.drools.samples.sample2.event;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ilecreurer.drools.samples.sample2.event.Position;
-import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-@SpringBootTest
-public class DistanceServiceTest {
+/**
+ * DistanceTest class.
+ * @author ilecreurer.
+ *
+ */
+public class DistanceTest {
 
     /**
-     * CollisionService object.
+     * Distance test.
      */
-    @Autowired
-    private DistanceService distanceService;
-
-    /**
-     * Check that the implementation is found.
-     */
-    @Test
-    void collisionServiceInjection() {
-        assertThat(distanceService).isNotNull();
-    }
-
     @Test
     void distanceCalc() {
         double [][] arPositionsOwner1 = {
@@ -50,8 +31,7 @@ public class DistanceServiceTest {
         for (int i = 0; i < arPositionsOwner1.length; i++) {
             Position p1 = new Position(arPositionsOwner1[i][0], arPositionsOwner1[i][1]);
             Position p2 = new Position(arPositionsOwner2[i][0], arPositionsOwner1[i][1]);
-            System.out.println(distanceService.getDistance(p1, p2));
+            assertDoesNotThrow(() -> {System.out.println(p1.distanceTo(p2));});
         }
-        assertThat(distanceService).isNotNull();
     }
 }

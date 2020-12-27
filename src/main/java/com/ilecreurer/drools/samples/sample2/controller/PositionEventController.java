@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//import com.ilecreurer.drools.samples.sample2.service.CollisionService;
+import com.ilecreurer.drools.samples.sample2.service.CollisionService;
+import com.ilecreurer.drools.samples.sample2.service.CollisionServiceException;
 
 /**
  * TransactionController class.
@@ -31,8 +32,8 @@ public class PositionEventController {
     /**
      * Collision service.
      */
-    //@Autowired
-    //private CollisionService collisionService;
+    @Autowired
+    private CollisionService collisionService;
 
     @PostMapping(value = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -66,7 +67,15 @@ public class PositionEventController {
             LOGGER.info("timestamp: {}", payload.getPositionEvents().get(0).getTimestamp());
         }
 
-        //collisionService.insertPositionEvents(payload.getPositionEvents());
+        try {
+            collisionService.insertPositionEvents(payload.getPositionEvents());
+        } catch (CollisionServiceException e) {
+            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(),0),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(),0),
+                    HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<>(new ResponseMessage("Success",0),
                 HttpStatus.ACCEPTED);

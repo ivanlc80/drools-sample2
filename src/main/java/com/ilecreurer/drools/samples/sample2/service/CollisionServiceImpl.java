@@ -1,7 +1,9 @@
 package com.ilecreurer.drools.samples.sample2.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntity;
+import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntityRepository;
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
+import com.ilecreurer.drools.samples.sample2.listener.DBPositionEventRuleRuntimeListener;
 
 /**
  * CollisionServiceImpl class.
@@ -49,8 +54,11 @@ public class CollisionServiceImpl implements CollisionService {
      */
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss.SSSZ");
 
+    /**
+     * PositionEventEntityRepository object.
+     */
     @Autowired
-    private DistanceService distanceService;
+    private PositionEventEntityRepository positionEventEntityRepository;
 
     /**
      * KieContainer object.
@@ -77,20 +85,11 @@ public class CollisionServiceImpl implements CollisionService {
     void onStart() throws CollisionServiceException {
         try {
             state = CollisionServiceState.STARTING;
-            LOGGER.info("CollisionServiceImpl is starting...");
+            LOGGER.debug("CollisionServiceImpl is starting...");
 
             LOGGER.info("Creating kieSession...");
             this.kieSession = kieContainer.newKieSession("ksessionceprules");
-
-            if (this.kieSession == null) {
-                throw new CollisionServiceException("Failed to create kieSession for session name 'ksessionceprules'");
-            }
-            if (this.distanceService == null) {
-                throw new CollisionServiceException("Failed to get distanceService");
-            }
-
             this.kieSession.setGlobal("LOGGER_DRL", LOGGER_DRL);
-            this.kieSession.setGlobal("distanceService", distanceService);
 
             LOGGER.info("Creating entryPoint...");
             this.entryPoint = this.kieSession.getEntryPoint("PositionEventStream");
@@ -101,10 +100,24 @@ public class CollisionServiceImpl implements CollisionService {
             long currentTime = this.clock.getCurrentTime();
             LOGGER.debug("PseudoClock starting at {}", sdf.format(new Date(currentTime)));
 
+            LOGGER.debug("Check number of facts...");
+            long fc = this.kieSession.getFactCount();
+            LOGGER.debug("fc: {}", fc);
+
+            this.state = CollisionServiceState.LOADING_NEW_SESSION;
+
+            // Add events from DB
+            //LOGGER.debug("Get the position events from DB...");
+            //List<PositionEvent> listPositionEvent = getPositionEventsFromDB();
+            //LOGGER.debug("Found {} events to re-insert.", listPositionEvent.size());
+
+            //LOGGER.debug("Re-insert position events into the session...");
+            //this.insertPositionEvents(listPositionEvent);
+
+            this.kieSession.addEventListener(new DBPositionEventRuleRuntimeListener(
+                    positionEventEntityRepository));
+
             state = CollisionServiceState.READY;
-        } catch (CollisionServiceException e) {
-            LOGGER.error("Failed to set up kieSession", e);
-            throw e;
         } catch (Exception e) {
             throw new CollisionServiceException("Failed to start", e);
         }
@@ -135,29 +148,62 @@ public class CollisionServiceImpl implements CollisionService {
             throw new IllegalArgumentException("positionEvents is null");
         if (positionEvents.isEmpty())
             throw new IllegalArgumentException("positionEvents is empty");
+        if (!state.equals(CollisionServiceState.LOADING_NEW_SESSION) &&
+                !state.equals(CollisionServiceState.READY))
+            throw new CollisionServiceException("Service is in state:" + this.state);
 
-        LOGGER.debug("Check number of facts...");
-        long fc = this.kieSession.getFactCount();
-        LOGGER.debug("fc: {}", fc);
+        try {
+            LOGGER.debug("Check number of facts...");
+            long fc = this.kieSession.getFactCount();
+            LOGGER.debug("fc: {}", fc);
 
-        for (PositionEvent positionEvent: positionEvents) {
-            LOGGER.debug("Inserting transaction...");
-            FactHandle factHandle = entryPoint.insert(positionEvent);
+            for (PositionEvent positionEvent: positionEvents) {
+                LOGGER.debug("Inserting transaction...");
+                entryPoint.insert(positionEvent);
 
-            long advanceTime = positionEvent.getTimestamp().getTime() - clock.getCurrentTime();
-            if (advanceTime > 0) {
-                LOGGER.debug("Advancing time by {}", advanceTime);
-                clock.advanceTime(advanceTime, TimeUnit.MILLISECONDS);
-                LOGGER.debug("Clock time: {}", sdf.format(clock.getCurrentTime()));
-            } else {
-                LOGGER.debug("Not advancing time. transaction time: {}, clock time: {}",
-                        positionEvent.getTimestamp().getTime(),
-                        clock.getCurrentTime());
+                long advanceTime = positionEvent.getTimestamp().getTime() - clock.getCurrentTime();
+                if (advanceTime > 0) {
+                    LOGGER.debug("Advancing time by {}", advanceTime);
+                    clock.advanceTime(advanceTime, TimeUnit.MILLISECONDS);
+                    LOGGER.debug("Clock time: {}", sdf.format(clock.getCurrentTime()));
+                } else {
+                    LOGGER.debug("Not advancing time. transaction time: {}, clock time: {}",
+                            positionEvent.getTimestamp().getTime(),
+                            clock.getCurrentTime());
+                }
+                LOGGER.debug("Firing rules!");
+                kieSession.fireAllRules();
             }
-            LOGGER.debug("Firing rules!");
-            kieSession.fireAllRules();
-        }
 
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new CollisionServiceException("Error during fact insert", e);
+        }
     }
 
+    /**
+     * Method to get the position events ordered by timestamps.
+     * @return List<PositionEvent> the list of position events.
+     */
+    private List<PositionEvent> getPositionEventsFromDB() {
+        LOGGER.info("Entering getPositionEventsFromDB...");
+        List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
+        List<PositionEventEntity> listPositionEventEntity =
+                positionEventEntityRepository.findByOrderByTimestamp();
+        Iterator<PositionEventEntity> itPositionEventEntity = listPositionEventEntity.iterator();
+        while(itPositionEventEntity.hasNext()) {
+            PositionEventEntity entity = itPositionEventEntity.next();
+            PositionEvent pe = new PositionEvent(
+                    entity.getIdEvent(),
+                    entity.getIdOwner(),
+                    entity.getType(),
+                    entity.getTimestamp(),
+                    entity.getLatitude(),
+                    entity.getLongitude()
+                    );
+            positionEvents.add(pe);
+        }
+        return positionEvents;
+    }
 }

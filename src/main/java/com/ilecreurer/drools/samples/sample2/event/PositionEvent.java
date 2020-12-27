@@ -1,9 +1,6 @@
 package com.ilecreurer.drools.samples.sample2.event;
 
-import java.io.Serializable;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * PositionEvent class.
