@@ -17,7 +17,11 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.ilecreurer.drools.samples.sample2" level="info" additivity="false">
+    <logger name="org.hibernate.jpa" level="debug" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.ilecreurer.drools.samples.sample2" level="debug" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 
