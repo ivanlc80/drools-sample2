@@ -30,22 +30,48 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
     private PositionEventEntityRepository positionEventEntityRepository;
 
     /**
+     * Determines if the listener is active or passive.
+     * <br>if active then the insertions take place.
+     * <br>if passive then the insertions are not done.
+     */
+    private boolean active;
+
+    /**
      * Constructor.
      * @param positionEventEntityRepository the repository.
      */
     public DBPositionEventRuleRuntimeListener(
-            final PositionEventEntityRepository positionEventEntityRepository)
+            final PositionEventEntityRepository positionEventEntityRepository,
+            final boolean active)
                     throws IllegalArgumentException {
         if (positionEventEntityRepository == null) {
             throw new IllegalArgumentException("positionEventEntityRepository is null");
         }
         this.positionEventEntityRepository = positionEventEntityRepository;
+        this.active = active;
+    }
+
+    /**
+     * @return the active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * @param active the active to set
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**
      * Method called when an object is inserted into the knowledge session.
      */
     public void objectInserted(ObjectInsertedEvent event) {
+        if (!active) {
+            return;
+        }
         if (event.getObject() instanceof PositionEvent) {
             try {
                 PositionEvent pe = (PositionEvent)event.getObject();
@@ -69,6 +95,9 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
      * Method called when an object is deleted from the knowledge session.
      */
     public void objectDeleted(ObjectDeletedEvent event) {
+        if (!active) {
+            return;
+        }
         if (event.getOldObject() instanceof PositionEvent) {
             try {
                 PositionEvent pe = (PositionEvent)event.getOldObject();
@@ -84,6 +113,9 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
      * Method called when an object is updated in the knowledge session.
      */
     public void objectUpdated(ObjectUpdatedEvent event) {
+        if (!active) {
+            return;
+        }
         if (event.getObject() instanceof PositionEvent) {
             try {
                 PositionEvent pe = (PositionEvent)event.getObject();

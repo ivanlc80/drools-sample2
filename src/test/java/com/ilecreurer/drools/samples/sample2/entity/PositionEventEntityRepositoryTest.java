@@ -57,7 +57,6 @@ public class PositionEventEntityRepositoryTest {
         entity2.setLatitude(42.2199299);
         entity2.setLongitude(8.7026244);
         entity2 = positionEventEntityRepository.save(entity2);
-
     }
 
     @Test

@@ -7,12 +7,9 @@ package com.ilecreurer.drools.samples.sample2.service;
 public enum CollisionServiceState {
     STOPPED("stopped"),
     STARTING("starting"),
-    CHECKING_EXISTING_SESSION("checking existing session"),
-    LOADING_EXISTING_SESSION("loading existing session"),
-    LOADING_NEW_SESSION("loading new session"),
+    LOADING_EVENTS("loading events"),
     READY("ready"),
-    PROCESSING("processing"),
-    SAVING_SESSION("saving session");
+    PROCESSING("processing");
 
     /**
      * The text.

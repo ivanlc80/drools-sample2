@@ -81,6 +81,11 @@ public class CollisionServiceImpl implements CollisionService {
      */
     private SessionPseudoClock clock;
 
+    /**
+     * DBPositionEventRuleRuntimeListener object.
+     */
+    private DBPositionEventRuleRuntimeListener dbPositionEventRuleRuntimeListener;
+
     @PostConstruct
     void onStart() throws CollisionServiceException {
         try {
@@ -104,18 +109,10 @@ public class CollisionServiceImpl implements CollisionService {
             long fc = this.kieSession.getFactCount();
             LOGGER.debug("fc: {}", fc);
 
-            this.state = CollisionServiceState.LOADING_NEW_SESSION;
-
-            // Add events from DB
-            //LOGGER.debug("Get the position events from DB...");
-            //List<PositionEvent> listPositionEvent = getPositionEventsFromDB();
-            //LOGGER.debug("Found {} events to re-insert.", listPositionEvent.size());
-
-            //LOGGER.debug("Re-insert position events into the session...");
-            //this.insertPositionEvents(listPositionEvent);
-
-            this.kieSession.addEventListener(new DBPositionEventRuleRuntimeListener(
-                    positionEventEntityRepository));
+            boolean active = true;
+            dbPositionEventRuleRuntimeListener = new DBPositionEventRuleRuntimeListener(
+                    positionEventEntityRepository, active);
+            this.kieSession.addEventListener(dbPositionEventRuleRuntimeListener);
 
             state = CollisionServiceState.READY;
         } catch (Exception e) {
@@ -135,6 +132,55 @@ public class CollisionServiceImpl implements CollisionService {
     }
 
     /**
+     * Method to get the position events ordered by timestamps.
+     * @return List<PositionEvent> the list of position events.
+     */
+    private List<PositionEvent> getPositionEventsFromDB() {
+        LOGGER.info("Entering getPositionEventsFromDB...");
+        List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
+        List<PositionEventEntity> listPositionEventEntity =
+                positionEventEntityRepository.findByOrderByTimestamp();
+        Iterator<PositionEventEntity> itPositionEventEntity = listPositionEventEntity.iterator();
+        while(itPositionEventEntity.hasNext()) {
+            PositionEventEntity entity = itPositionEventEntity.next();
+            PositionEvent pe = new PositionEvent(
+                    entity.getIdEvent(),
+                    entity.getIdOwner(),
+                    entity.getType(),
+                    entity.getTimestamp(),
+                    entity.getLatitude(),
+                    entity.getLongitude()
+                    );
+            positionEvents.add(pe);
+        }
+        return positionEvents;
+    }
+
+    /**
+     * Method to preload the session with events.
+     * @throws CollisionServiceException when the insertion fails.
+     */
+    public void preloadSession()
+            throws CollisionServiceException, IllegalArgumentException {
+        state = CollisionServiceState.LOADING_EVENTS;
+
+        if (dbPositionEventRuleRuntimeListener != null) {
+            dbPositionEventRuleRuntimeListener.setActive(false);
+        }
+
+        List<PositionEvent> positionEvents = getPositionEventsFromDB();
+        if (!positionEvents.isEmpty()) {
+            insertPositionEvents(positionEvents);
+        }
+
+        if (dbPositionEventRuleRuntimeListener != null) {
+            dbPositionEventRuleRuntimeListener.setActive(true);
+        }
+
+        state = CollisionServiceState.READY;
+    }
+
+    /**
      * Method to insert position events.
      * @param positionEvents a list of PositionEvent objects.
      * @throws CollisionServiceException when the insertion fails.
@@ -148,7 +194,7 @@ public class CollisionServiceImpl implements CollisionService {
             throw new IllegalArgumentException("positionEvents is null");
         if (positionEvents.isEmpty())
             throw new IllegalArgumentException("positionEvents is empty");
-        if (!state.equals(CollisionServiceState.LOADING_NEW_SESSION) &&
+        if (!state.equals(CollisionServiceState.LOADING_EVENTS) &&
                 !state.equals(CollisionServiceState.READY))
             throw new CollisionServiceException("Service is in state:" + this.state);
 
@@ -182,28 +228,4 @@ public class CollisionServiceImpl implements CollisionService {
         }
     }
 
-    /**
-     * Method to get the position events ordered by timestamps.
-     * @return List<PositionEvent> the list of position events.
-     */
-    private List<PositionEvent> getPositionEventsFromDB() {
-        LOGGER.info("Entering getPositionEventsFromDB...");
-        List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
-        List<PositionEventEntity> listPositionEventEntity =
-                positionEventEntityRepository.findByOrderByTimestamp();
-        Iterator<PositionEventEntity> itPositionEventEntity = listPositionEventEntity.iterator();
-        while(itPositionEventEntity.hasNext()) {
-            PositionEventEntity entity = itPositionEventEntity.next();
-            PositionEvent pe = new PositionEvent(
-                    entity.getIdEvent(),
-                    entity.getIdOwner(),
-                    entity.getType(),
-                    entity.getTimestamp(),
-                    entity.getLatitude(),
-                    entity.getLongitude()
-                    );
-            positionEvents.add(pe);
-        }
-        return positionEvents;
-    }
 }

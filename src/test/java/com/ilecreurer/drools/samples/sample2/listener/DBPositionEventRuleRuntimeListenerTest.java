@@ -39,20 +39,7 @@ public class DBPositionEventRuleRuntimeListenerTest {
         assertDoesNotThrow(() -> {
             DBPositionEventRuleRuntimeListener listener =
                 new DBPositionEventRuleRuntimeListener(
-                        positionEventEntityRepository);
+                        positionEventEntityRepository, true);
         });
     }
-
-    /**
-     * Check that inserting an empty list is not allowed.
-     */
-    //@Test
-    //@Order(2)
-    /*void insertEmptyPositionEvents() {
-        ObjectInsertedEvent event = null;
-        PositionEvent pe = new PositionEvent();
-
-        assertThrows(IllegalArgumentException.class ,
-                () -> dbPositionEventRuleRuntimeListener.objectInserted(event));
-    }*/
 }

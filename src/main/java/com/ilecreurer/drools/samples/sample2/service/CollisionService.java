@@ -9,6 +9,14 @@ import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
  * @author ilecreurer.
  */
 public interface CollisionService {
+
+    /**
+     * Method to preload the session with events.
+     * @throws CollisionServiceException when the insertion fails.
+     */
+    void preloadSession()
+            throws CollisionServiceException;
+
     /**
      * Method to insert position events.
      * @param positionEvents a list of PositionEvent objects.

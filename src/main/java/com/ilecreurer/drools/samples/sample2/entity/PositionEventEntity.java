@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 
@@ -13,6 +14,7 @@ import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
  * @author ilecreurer.
  */
 @Entity
+@Table(name = "POSITION_EVENT")
 public class PositionEventEntity implements Serializable {
 
     /**
