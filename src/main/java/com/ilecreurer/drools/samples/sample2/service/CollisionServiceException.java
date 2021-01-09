@@ -14,20 +14,22 @@ public class CollisionServiceException extends Exception {
     public CollisionServiceException() {
     }
 
-    public CollisionServiceException(String message) {
+    public CollisionServiceException(final String message) {
         super(message);
     }
 
-    public CollisionServiceException(Throwable cause) {
+    public CollisionServiceException(final Throwable cause) {
         super(cause);
     }
 
-    public CollisionServiceException(String message, Throwable cause) {
+    public CollisionServiceException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public CollisionServiceException(String message, Throwable cause, boolean enableSuppression,
-            boolean writableStackTrace) {
+    public CollisionServiceException(final String message,
+            final Throwable cause,
+            final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

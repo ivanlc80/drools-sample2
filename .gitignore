@@ -4,6 +4,7 @@
 .project
 .metadata
 .settings/
+.checkstyle
 
 /data/
 /output/

@@ -14,14 +14,16 @@ public class ResponseMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String message;
     private final int errorCode;
+
     /**
      * Constructor.
-     * @param message the message.
+     * @param messageParam the message param.
+     * @param errorCodeParam the errorCode param.
      */
-    public ResponseMessage(final String message, final int errorCode) {
+    public ResponseMessage(final String messageParam, final int errorCodeParam) {
         super();
-        this.message = message;
-        this.errorCode = errorCode;
+        this.message = messageParam;
+        this.errorCode = errorCodeParam;
     }
     /**
      * Get message.

@@ -1,6 +1,9 @@
 package com.ilecreurer.drools.samples.sample2.service;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -9,14 +12,13 @@ import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @SpringBootTest
+@TestMethodOrder(OrderAnnotation.class)
 public class CollisionServiceTest {
     /**
      * SimpleDateFormat object.
@@ -33,6 +35,7 @@ public class CollisionServiceTest {
      * Check that the implementation is found.
      */
     @Test
+    @Order(1)
     void collisionServiceInjection() {
         assertThat(collisionService).isNotNull();
     }
@@ -41,6 +44,7 @@ public class CollisionServiceTest {
      * Check that inserting an empty list is not allowed.
      */
     @Test
+    @Order(2)
     void insertEmptyPositionEvents() {
         List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
         assertThrows(IllegalArgumentException.class ,
@@ -51,6 +55,7 @@ public class CollisionServiceTest {
      * Check that inserting a non-empty list is allowed.
      */
     @Test
+    @Order(3)
     void insertNoneEmptyPositionEvents() {
         double [][] arPositionsOwner1 = {
                 {42.23925810080146, 8.720775789889855},

@@ -1,13 +1,19 @@
-package com.ilecreurer.drools.samples.sample2.event;
+package com.ilecreurer.drools.samples.sample2.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
- * PositionEvent class.
- * @author ilecreurer
- *
+ * Entity wrapper class PositionEventEntity.
+ * @author ilecreurer.
  */
-public class PositionEvent extends Position {
+@Entity
+@Table(name = "POSITION_EVENT")
+public class PositionEventEntity implements Serializable {
 
     /**
      * Serial.
@@ -15,37 +21,9 @@ public class PositionEvent extends Position {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructor.
-     */
-    public PositionEvent() {
-        super();
-    }
-
-    /**
-     * Constructor.
-     * @param idEventParam the idEvent.
-     * @param idOwnerParam the idOwner.
-     * @param typeParam the type.
-     * @param timestampParam the timestamp.
-     * @param latitudeParam the latitude.
-     * @param longitudeParam the longitude.
-     */
-    public PositionEvent(final String idEventParam,
-            final long idOwnerParam,
-            final String typeParam,
-            final Date timestampParam,
-            final double latitudeParam,
-            final double longitudeParam) {
-        super(latitudeParam, longitudeParam);
-        this.idEvent = idEventParam;
-        this.idOwner = idOwnerParam;
-        this.type = typeParam;
-        this.timestamp = timestampParam;
-    }
-
-    /**
      * idTransaction.
      */
+    @Id
     private String idEvent;
 
     /**
@@ -62,6 +40,46 @@ public class PositionEvent extends Position {
      * Timestamp.
      */
     private Date timestamp;
+
+    /**
+     * Latitude.
+     */
+    private double latitude;
+
+    /**
+     * Longitude.
+     */
+    private double longitude;
+
+    /**
+     * Constructor.
+     */
+    public PositionEventEntity() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     * @param idEventParam the idEvent.
+     * @param idOwnerParam the idOwner.
+     * @param typeParam the type.
+     * @param timestampParam the timestamp.
+     * @param latitudeParam the latitude.
+     * @param longitudeParam the longitude.
+     */
+    public PositionEventEntity(final String idEventParam,
+            final long idOwnerParam,
+            final String typeParam,
+            final Date timestampParam,
+            final double latitudeParam,
+            final double longitudeParam) {
+        this.idEvent = idEventParam;
+        this.idOwner = idOwnerParam;
+        this.type = typeParam;
+        this.timestamp = timestampParam;
+        this.latitude = latitudeParam;
+        this.longitude = longitudeParam;
+    }
 
     /**
      * @return the idEvent
@@ -118,5 +136,37 @@ public class PositionEvent extends Position {
     public void setTimestamp(final Date timestampParam) {
         this.timestamp = timestampParam;
     }
+
+    /**
+     * @return the latitude
+     */
+    public double getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * @param latitudeParam the latitude to set
+     */
+    public void setLatitude(final double latitudeParam) {
+        this.latitude = latitudeParam;
+    }
+
+    /**
+     * @return the longitude
+     */
+    public double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * @param longitudeParam the longitude to set
+     */
+    public void setLongitude(final double longitudeParam) {
+        this.longitude = longitudeParam;
+    }
+
+
+
+
 
 }

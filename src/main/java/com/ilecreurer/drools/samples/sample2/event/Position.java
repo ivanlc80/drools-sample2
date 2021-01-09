@@ -7,6 +7,25 @@ import java.io.Serializable;
  * @author ilecreurer.
  */
 public class Position implements Serializable {
+    /**
+     * Max latitude.
+     */
+    private static final int MAX_LAT = 90;
+
+    /**
+     * 180 degrees.
+     */
+    private static final int PI_IN_DEGREES = 180;
+
+    /**
+     * 60 minutes in one degree.
+     */
+    private static final int MINUTES_IN_DEGREE = 60;
+
+    /**
+     * Number of metres in one NM which is one minute of a degree.
+     */
+    private static final int METRES_PER_NAUTICAL_MILE = 1852;
 
     /**
      * Serial.
@@ -32,13 +51,13 @@ public class Position implements Serializable {
 
     /**
      * Constructor.
-     * @param latitude the latitude.
-     * @param longitude the longitude.
+     * @param latitudeParam the latitude.
+     * @param longitudeParam the longitude.
      */
-    public Position(final double latitude, final double longitude) {
+    public Position(final double latitudeParam, final double longitudeParam) {
         super();
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latitude = latitudeParam;
+        this.longitude = longitudeParam;
     }
 
     /**
@@ -49,10 +68,10 @@ public class Position implements Serializable {
     }
 
     /**
-     * @param latitude the latitude to set
+     * @param latitudeParam the latitude to set.
      */
-    public void setLatitude(final double latitude) {
-        this.latitude = latitude;
+    public void setLatitude(final double latitudeParam) {
+        this.latitude = latitudeParam;
     }
 
     /**
@@ -63,10 +82,49 @@ public class Position implements Serializable {
     }
 
     /**
-     * @param longitude the longitude to set
+     * @param longitudeParam the longitude to set.
      */
-    public void setLongitude(final double longitude) {
-        this.longitude = longitude;
+    public void setLongitude(final double longitudeParam) {
+        this.longitude = longitudeParam;
     }
 
+    /**
+     * Method to get the distance between two points on the sphere.
+     * @param p2 the second point.
+     * @return The distance in metres.
+     * @throws IllegalArgumentException when the positions have incorrect data.
+     */
+    public double distanceTo(final Position p2) throws IllegalArgumentException {
+        if (this.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p1.latitude is greater than 90");
+        if (this.getLatitude() < -MAX_LAT) throw new IllegalArgumentException("p1.latitude is less than 90");
+        if (p2.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p2.latitude is greater than 90");
+        if (p2.getLatitude() < -MAX_LAT) throw new IllegalArgumentException("p2.latitude is less than 90");
+
+        // cos(c) = cos(a)*cos(b) + sin(a)*sin(b)*cos(C)
+        double a = toRadians(MAX_LAT - this.getLatitude());
+        double b = toRadians(MAX_LAT - p2.getLatitude());
+        double angleC = toRadians(this.getLongitude() - p2.getLongitude());
+        double cosc =
+                (
+                    Math.cos(a) * Math.cos(b)
+                )
+                + (
+                    Math.sin(a) * Math.sin(b) * Math.cos(angleC)
+                );
+        double c = toDegrees(Math.acos(cosc));
+        double dist = convertDegreesToMetres(c);
+        return dist;
+    }
+
+    public static double toRadians(final double angleInDegrees) {
+        return (angleInDegrees / PI_IN_DEGREES) * Math.PI;
+    }
+
+    public static double toDegrees(final double angleInRadians) {
+        return (angleInRadians / Math.PI) * PI_IN_DEGREES;
+    }
+
+    public static double convertDegreesToMetres(final double angleInDegrees) {
+        return angleInDegrees * MINUTES_IN_DEGREE * METRES_PER_NAUTICAL_MILE;
+    }
 }
