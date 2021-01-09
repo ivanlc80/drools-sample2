@@ -42,3 +42,66 @@ curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert" -H "Content-Typ
 ]
 }'
 ```
+
+## Generate docker image
+
+```
+docker build -t ilecreurer/drools-sample2:1.0.0 .
+```
+
+## Run docker container
+
+
+### First run
+```
+docker run -p 8080:8080 ilecreurer/drools-sample2:1.0.0
+```
+
+### To stop and re-run
+
+Get the container ID:
+
+```
+docker ps -a | grep drools
+283516fb18fe        ilecreurer/drools-sample2:1.0.0                                     "java -jar /drools-s…"   5 minutes ago       Up 3 minutes                0.0.0.0:8080->8080/tcp              naughty_golick
+```
+
+Start:
+
+```
+docker start 283516fb18fe
+```
+
+Check logs written to the console:
+
+```
+docker logs -f 283516fb18fe
+
+...
+2021-01-09 19:29:48,393 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Check number of facts...
+2021-01-09 19:29:48,393 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: fc: 0
+2021-01-09 19:29:48,393 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Inserting transaction...
+2021-01-09 19:29:48,402 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Advancing time by 1606681082000
+2021-01-09 19:29:48,403 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Clock time: 29/11/2020T20:18:02.000+0000
+2021-01-09 19:29:48,403 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Firing rules!
+2021-01-09 19:29:48,451 DEBUG com.ilecreurer.drools.samples.sample2.event.Rule_insertion918283534 defaultConsequence: New PE: 125, 1, A
+2021-01-09 19:29:48,452 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Inserting transaction...
+2021-01-09 19:29:48,452 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Advancing time by 1000
+2021-01-09 19:29:48,452 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Clock time: 29/11/2020T20:18:03.000+0000
+2021-01-09 19:29:48,452 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl insertPositionEvents: Firing rules!
+2021-01-09 19:29:48,457 DEBUG com.ilecreurer.drools.samples.sample2.event.Rule_insertion918283534 defaultConsequence: New PE: 126, 2, B
+2021-01-09 19:29:48,459 WARN  com.ilecreurer.drools.samples.sample2.event.Rule_collision782321111 defaultConsequence: 1 is too close to 2
+2021-01-09 19:29:48,459 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl preloadSession: Setting dbPositionEventRuleRuntimeListener.active to true  ...
+2021-01-09 19:29:48,459 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl preloadSession: Adding dbPositionEventRuleRuntimeListener to kieSession...
+2021-01-09 19:29:48,459 DEBUG com.ilecreurer.drools.samples.sample2.service.CollisionServiceImpl preloadSession: Setting state to ready ...
+
+```
+
+Note that facts are restored from the database, ie, the ksession is redydrated.
+
+
+Stop:
+
+```
+docker stop 283516fb18fe
+```
