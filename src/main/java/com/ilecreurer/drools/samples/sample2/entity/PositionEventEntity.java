@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
-
 /**
  * Entity wrapper class PositionEventEntity.
  * @author ilecreurer.
@@ -62,25 +60,25 @@ public class PositionEventEntity implements Serializable {
 
     /**
      * Constructor.
-     * @param idEvent the idEvent param.
-     * @param idOwner the idOwner param.
-     * @param type the type param.
-     * @param timestamp the timestamp param.
-     * @param latitude the latitude param.
-     * @param longitude the longitude param.
+     * @param idEventParam the idEvent.
+     * @param idOwnerParam the idOwner.
+     * @param typeParam the type.
+     * @param timestampParam the timestamp.
+     * @param latitudeParam the latitude.
+     * @param longitudeParam the longitude.
      */
-    public PositionEventEntity(final String idEvent,
-            final long idOwner,
-            final String type,
-            final Date timestamp,
-            final double latitude,
-            final double longitude) {
-        this.idEvent = idEvent;
-        this.idOwner = idOwner;
-        this.type = type;
-        this.timestamp = timestamp;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public PositionEventEntity(final String idEventParam,
+            final long idOwnerParam,
+            final String typeParam,
+            final Date timestampParam,
+            final double latitudeParam,
+            final double longitudeParam) {
+        this.idEvent = idEventParam;
+        this.idOwner = idOwnerParam;
+        this.type = typeParam;
+        this.timestamp = timestampParam;
+        this.latitude = latitudeParam;
+        this.longitude = longitudeParam;
     }
 
     /**
@@ -91,10 +89,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param idEvent the idEvent to set
+     * @param idEventParam the idEvent to set
      */
-    public void setIdEvent(String idEvent) {
-        this.idEvent = idEvent;
+    public void setIdEvent(final String idEventParam) {
+        this.idEvent = idEventParam;
     }
 
     /**
@@ -105,10 +103,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param idOwner the idOwner to set
+     * @param idOwnerParam the idOwner to set
      */
-    public void setIdOwner(long idOwner) {
-        this.idOwner = idOwner;
+    public void setIdOwner(final long idOwnerParam) {
+        this.idOwner = idOwnerParam;
     }
 
     /**
@@ -119,10 +117,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param type the type to set
+     * @param typeParam the type to set
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setType(final String typeParam) {
+        this.type = typeParam;
     }
 
     /**
@@ -133,10 +131,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestampParam the timestamp to set
      */
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(final Date timestampParam) {
+        this.timestamp = timestampParam;
     }
 
     /**
@@ -147,10 +145,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param latitude the latitude to set
+     * @param latitudeParam the latitude to set
      */
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLatitude(final double latitudeParam) {
+        this.latitude = latitudeParam;
     }
 
     /**
@@ -161,10 +159,10 @@ public class PositionEventEntity implements Serializable {
     }
 
     /**
-     * @param longitude the longitude to set
+     * @param longitudeParam the longitude to set
      */
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLongitude(final double longitudeParam) {
+        this.longitude = longitudeParam;
     }
 
 

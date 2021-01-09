@@ -38,7 +38,7 @@ public class PositionEventController {
     @PostMapping(value = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public final ResponseEntity<ResponseMessage> insertPositionEvents (
+    public final ResponseEntity<ResponseMessage> insertPositionEvents(
             @RequestBody final MultiplePositionEventsPayload payload,
             final HttpServletResponse response) {
 
@@ -48,19 +48,23 @@ public class PositionEventController {
 
         if (payload.getPositionEvents() == null) {
             LOGGER.warn("Missing positionEvents attribute");
-            return new ResponseEntity<>(new ResponseMessage("Missing positionEvents attribute",100),
+            return new ResponseEntity<>(new ResponseMessage("Missing positionEvents attribute",
+                    ErrorCode.MISSING_POSITION_EVENTS_ATTR.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
         if (payload.getNumberItems() == null) {
-            return new ResponseEntity<>(new ResponseMessage("Missing numberItems attribute",101),
+            return new ResponseEntity<>(new ResponseMessage("Missing numberItems attribute",
+                    ErrorCode.MISSING_NUMBER_ITEMS_ATTR.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
         if (payload.getNumberItems().intValue() != payload.getPositionEvents().size()) {
-            return new ResponseEntity<>(new ResponseMessage("Number of items mismatch",102),
+            return new ResponseEntity<>(new ResponseMessage("Number of items mismatch",
+                    ErrorCode.NUMBER_ITEMS_MISMATCH.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
         if (payload.getNumberItems().intValue() == 0) {
-            return new ResponseEntity<>(new ResponseMessage("0 items",103),
+            return new ResponseEntity<>(new ResponseMessage("0 items",
+                    ErrorCode.EMPTY_ITEMS_ATTR.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
         if (payload.getPositionEvents() != null && payload.getPositionEvents().size() > 0) {
@@ -70,14 +74,14 @@ public class PositionEventController {
         try {
             collisionService.insertPositionEvents(payload.getPositionEvents());
         } catch (CollisionServiceException e) {
-            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(),0),
+            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(), 0),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(),0),
+            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(), 0),
                     HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(new ResponseMessage("Success",0),
+        return new ResponseEntity<>(new ResponseMessage("Success", 0),
                 HttpStatus.ACCEPTED);
     }
 }

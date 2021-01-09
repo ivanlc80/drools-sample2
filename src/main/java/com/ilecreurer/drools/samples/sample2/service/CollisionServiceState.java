@@ -5,11 +5,22 @@ package com.ilecreurer.drools.samples.sample2.service;
  * @author ilecreurer.
  */
 public enum CollisionServiceState {
+    /**
+     * Stopped.
+     */
     STOPPED("stopped"),
+    /**
+     * Starting.
+     */
     STARTING("starting"),
+    /**
+     * Loading events.
+     */
     LOADING_EVENTS("loading events"),
-    READY("ready"),
-    PROCESSING("processing");
+    /**
+     * Ready.
+     */
+    READY("ready");
 
     /**
      * The text.
@@ -18,10 +29,10 @@ public enum CollisionServiceState {
 
     /**
      * Constructor.
-     * @param text the text param.
+     * @param textParam the text param.
      */
-    CollisionServiceState(final String text) {
-        this.text = text;
+    CollisionServiceState(final String textParam) {
+        this.text = textParam;
     }
 
     /* (non-Javadoc)

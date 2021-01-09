@@ -13,7 +13,6 @@ import javax.annotation.PreDestroy;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.EntryPoint;
-import org.kie.api.runtime.rule.FactHandle;
 import org.kie.api.time.SessionPseudoClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,8 @@ public class CollisionServiceImpl implements CollisionService {
     /**
      * Logger for CEP.
      */
-    private static final Logger LOGGER_DRL = (Logger) LoggerFactory.getLogger("com.ilecreurer.drools.samples.sample2.event.Cep");
+    private static final Logger LOGGER_DRL =
+            (Logger) LoggerFactory.getLogger("com.ilecreurer.drools.samples.sample2.event.Cep");
 
     /**
      * Current state of the engine.
@@ -100,7 +100,7 @@ public class CollisionServiceImpl implements CollisionService {
             this.entryPoint = this.kieSession.getEntryPoint("PositionEventStream");
 
             LOGGER.info("Getting session clock...");
-            this.clock = (SessionPseudoClock)this.kieSession.getSessionClock();
+            this.clock = (SessionPseudoClock) this.kieSession.getSessionClock();
 
             long currentTime = this.clock.getCurrentTime();
             LOGGER.debug("PseudoClock starting at {}", sdf.format(new Date(currentTime)));
@@ -108,11 +108,6 @@ public class CollisionServiceImpl implements CollisionService {
             LOGGER.debug("Check number of facts...");
             long fc = this.kieSession.getFactCount();
             LOGGER.debug("fc: {}", fc);
-
-            boolean active = true;
-            dbPositionEventRuleRuntimeListener = new DBPositionEventRuleRuntimeListener(
-                    positionEventEntityRepository, active);
-            this.kieSession.addEventListener(dbPositionEventRuleRuntimeListener);
 
             state = CollisionServiceState.READY;
         } catch (Exception e) {
@@ -141,7 +136,7 @@ public class CollisionServiceImpl implements CollisionService {
         List<PositionEventEntity> listPositionEventEntity =
                 positionEventEntityRepository.findByOrderByTimestamp();
         Iterator<PositionEventEntity> itPositionEventEntity = listPositionEventEntity.iterator();
-        while(itPositionEventEntity.hasNext()) {
+        while (itPositionEventEntity.hasNext()) {
             PositionEventEntity entity = itPositionEventEntity.next();
             PositionEvent pe = new PositionEvent(
                     entity.getIdEvent(),
@@ -187,15 +182,15 @@ public class CollisionServiceImpl implements CollisionService {
      * @throws IllegalArgumentException when the positionEvents is invalid.
      */
     @Override
-    public void insertPositionEvents(List<PositionEvent> positionEvents)
+    public void insertPositionEvents(final List<PositionEvent> positionEvents)
             throws CollisionServiceException, IllegalArgumentException {
         LOGGER.debug("Entering insertPositionEvents...");
         if (positionEvents == null)
             throw new IllegalArgumentException("positionEvents is null");
         if (positionEvents.isEmpty())
             throw new IllegalArgumentException("positionEvents is empty");
-        if (!state.equals(CollisionServiceState.LOADING_EVENTS) &&
-                !state.equals(CollisionServiceState.READY))
+        if (!state.equals(CollisionServiceState.LOADING_EVENTS)
+                && !state.equals(CollisionServiceState.READY))
             throw new CollisionServiceException("Service is in state:" + this.state);
 
         try {
@@ -223,7 +218,7 @@ public class CollisionServiceImpl implements CollisionService {
 
         } catch (IllegalArgumentException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new CollisionServiceException("Error during fact insert", e);
         }
     }

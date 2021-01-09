@@ -26,7 +26,8 @@ rule "substitution"
 salience 90
 when
     $pe : PositionEvent() from entry-point "PositionEventStream"
-    $previousPe : PositionEvent (this.idOwner == $pe.idOwner, this.timestamp < $pe.timestamp) from entry-point "PositionEventStream"
+    $previousPe : PositionEvent (this.idOwner == $pe.idOwner,
+        this.timestamp < $pe.timestamp) from entry-point "PositionEventStream"
 then
     LOGGER_DRL.debug("Remove PE: {}, {}, {}", $previousPe.getIdEvent(),
         $previousPe.getIdOwner(),

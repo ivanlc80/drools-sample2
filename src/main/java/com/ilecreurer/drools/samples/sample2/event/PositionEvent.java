@@ -23,24 +23,24 @@ public class PositionEvent extends Position {
 
     /**
      * Constructor.
-     * @param idEvent the idEvent.
-     * @param idOwner the idOwner.
-     * @param type the type.
-     * @param timestamp the timestamp.
-     * @param latitude the latitude.
-     * @param longitude the longitude.
+     * @param idEventParam the idEvent.
+     * @param idOwnerParam the idOwner.
+     * @param typeParam the type.
+     * @param timestampParam the timestamp.
+     * @param latitudeParam the latitude.
+     * @param longitudeParam the longitude.
      */
-    public PositionEvent(final String idEvent,
-            final long idOwner,
-            final String type,
-            final Date timestamp,
-            final double latitude,
-            final double longitude) {
-        super(latitude, longitude);
-        this.idEvent = idEvent;
-        this.idOwner = idOwner;
-        this.type = type;
-        this.timestamp = timestamp;
+    public PositionEvent(final String idEventParam,
+            final long idOwnerParam,
+            final String typeParam,
+            final Date timestampParam,
+            final double latitudeParam,
+            final double longitudeParam) {
+        super(latitudeParam, longitudeParam);
+        this.idEvent = idEventParam;
+        this.idOwner = idOwnerParam;
+        this.type = typeParam;
+        this.timestamp = timestampParam;
     }
 
     /**
@@ -71,10 +71,10 @@ public class PositionEvent extends Position {
     }
 
     /**
-     * @param idEvent the idEvent to set
+     * @param idEventParam the idEvent to set
      */
-    public void setIdEvent(String idEvent) {
-        this.idEvent = idEvent;
+    public void setIdEvent(final String idEventParam) {
+        this.idEvent = idEventParam;
     }
 
     /**
@@ -85,10 +85,10 @@ public class PositionEvent extends Position {
     }
 
     /**
-     * @param idOwner the idOwner to set
+     * @param idOwnerParam the idOwner to set
      */
-    public void setIdOwner(long idOwner) {
-        this.idOwner = idOwner;
+    public void setIdOwner(final long idOwnerParam) {
+        this.idOwner = idOwnerParam;
     }
 
     /**
@@ -99,10 +99,10 @@ public class PositionEvent extends Position {
     }
 
     /**
-     * @param type the type to set
+     * @param typeParam the type to set
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setType(final String typeParam) {
+        this.type = typeParam;
     }
 
     /**
@@ -113,10 +113,10 @@ public class PositionEvent extends Position {
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestampParam the timestamp to set
      */
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(final Date timestampParam) {
+        this.timestamp = timestampParam;
     }
 
 }

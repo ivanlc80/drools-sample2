@@ -27,7 +27,7 @@ public class MultiplePositionEventsPayload implements Serializable {
     private List<PositionEvent> positionEvents;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public MultiplePositionEventsPayload() {
         super();
@@ -41,10 +41,10 @@ public class MultiplePositionEventsPayload implements Serializable {
     }
 
     /**
-     * @param numberItems the numberItems to set
+     * @param numberItemsParams the numberItems to set
      */
-    public void setNumberItems(final Integer numberItems) {
-        this.numberItems = numberItems;
+    public void setNumberItems(final Integer numberItemsParams) {
+        this.numberItems = numberItemsParams;
     }
 
     /**
@@ -55,10 +55,10 @@ public class MultiplePositionEventsPayload implements Serializable {
     }
 
     /**
-     * @param positionEvents the positionEvents to set
+     * @param positionEventsParam the positionEvents to set
      */
-    public void setPositionEvents(final List<PositionEvent> positionEvents) {
-        this.positionEvents = positionEvents;
+    public void setPositionEvents(final List<PositionEvent> positionEventsParam) {
+        this.positionEvents = positionEventsParam;
     }
 
 }

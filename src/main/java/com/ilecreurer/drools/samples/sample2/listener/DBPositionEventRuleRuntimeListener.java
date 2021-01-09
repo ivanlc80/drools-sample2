@@ -6,9 +6,6 @@ import org.kie.api.event.rule.ObjectInsertedEvent;
 import org.kie.api.event.rule.ObjectUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntity;
 import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntityRepository;
@@ -38,17 +35,18 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
 
     /**
      * Constructor.
-     * @param positionEventEntityRepository the repository.
+     * @param positionEventEntityRepositoryParam the repository.
+     * @param activeParam boolean indicating if storage is active.
      */
     public DBPositionEventRuleRuntimeListener(
-            final PositionEventEntityRepository positionEventEntityRepository,
-            final boolean active)
+            final PositionEventEntityRepository positionEventEntityRepositoryParam,
+            final boolean activeParam)
                     throws IllegalArgumentException {
-        if (positionEventEntityRepository == null) {
-            throw new IllegalArgumentException("positionEventEntityRepository is null");
+        if (positionEventEntityRepositoryParam == null) {
+            throw new IllegalArgumentException("positionEventEntityRepositoryParam is null");
         }
-        this.positionEventEntityRepository = positionEventEntityRepository;
-        this.active = active;
+        this.positionEventEntityRepository = positionEventEntityRepositoryParam;
+        this.active = activeParam;
     }
 
     /**
@@ -59,22 +57,23 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
     }
 
     /**
-     * @param active the active to set
+     * @param activeParam the active to set
      */
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setActive(final boolean activeParam) {
+        this.active = activeParam;
     }
 
     /**
      * Method called when an object is inserted into the knowledge session.
+     * @param event the ObjectInsertedEvent.
      */
-    public void objectInserted(ObjectInsertedEvent event) {
+    public void objectInserted(final ObjectInsertedEvent event) {
         if (!active) {
             return;
         }
         if (event.getObject() instanceof PositionEvent) {
             try {
-                PositionEvent pe = (PositionEvent)event.getObject();
+                PositionEvent pe = (PositionEvent) event.getObject();
                 LOGGER.debug("Inserting event: {}", pe.getIdEvent());
                 PositionEventEntity entity = new PositionEventEntity(
                         pe.getIdEvent(),
@@ -93,14 +92,15 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
 
     /**
      * Method called when an object is deleted from the knowledge session.
+     * @param event the ObjectDeletedEvent.
      */
-    public void objectDeleted(ObjectDeletedEvent event) {
+    public void objectDeleted(final ObjectDeletedEvent event) {
         if (!active) {
             return;
         }
         if (event.getOldObject() instanceof PositionEvent) {
             try {
-                PositionEvent pe = (PositionEvent)event.getOldObject();
+                PositionEvent pe = (PositionEvent) event.getOldObject();
                 LOGGER.debug("Deleting event: {}", pe.getIdEvent());
                 positionEventEntityRepository.deleteById(pe.getIdEvent());
             } catch (Exception e) {
@@ -111,14 +111,15 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
 
     /**
      * Method called when an object is updated in the knowledge session.
+     * @param event the ObjectUpdatedEvent.
      */
-    public void objectUpdated(ObjectUpdatedEvent event) {
+    public void objectUpdated(final ObjectUpdatedEvent event) {
         if (!active) {
             return;
         }
         if (event.getObject() instanceof PositionEvent) {
             try {
-                PositionEvent pe = (PositionEvent)event.getObject();
+                PositionEvent pe = (PositionEvent) event.getObject();
                 LOGGER.debug("Updating event: {}", pe.getIdEvent());
                 PositionEventEntity entity = new PositionEventEntity(
                         pe.getIdEvent(),

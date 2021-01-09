@@ -1,9 +1,5 @@
 package com.ilecreurer.drools.samples.sample2.runner;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +25,7 @@ public class DataLoader implements ApplicationRunner {
     private CollisionService collisionService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(final ApplicationArguments args) throws Exception {
         LOGGER.info("Entering run...");
         try {
             collisionService.preloadSession();
