@@ -157,21 +157,30 @@ public class CollisionServiceImpl implements CollisionService {
      */
     public void preloadSession()
             throws CollisionServiceException, IllegalArgumentException {
+        LOGGER.info("Entering preloadSession...");
+
+        LOGGER.debug("Setting state to {} ...", CollisionServiceState.LOADING_EVENTS.toString());
         state = CollisionServiceState.LOADING_EVENTS;
 
-        if (dbPositionEventRuleRuntimeListener != null) {
-            dbPositionEventRuleRuntimeListener.setActive(false);
-        }
+        LOGGER.debug("Creating dbPositionEventRuleRuntimeListener (inactive)...");
+        dbPositionEventRuleRuntimeListener = new DBPositionEventRuleRuntimeListener(
+                positionEventEntityRepository, false);
 
+        LOGGER.debug("Getting stored position events...");
         List<PositionEvent> positionEvents = getPositionEventsFromDB();
         if (!positionEvents.isEmpty()) {
+            LOGGER.debug("Inserting position events into kession...");
             insertPositionEvents(positionEvents);
         }
 
-        if (dbPositionEventRuleRuntimeListener != null) {
-            dbPositionEventRuleRuntimeListener.setActive(true);
-        }
 
+        LOGGER.debug("Setting dbPositionEventRuleRuntimeListener.active to true  ...");
+        dbPositionEventRuleRuntimeListener.setActive(true);
+
+        LOGGER.debug("Adding dbPositionEventRuleRuntimeListener to kieSession...");
+        this.kieSession.addEventListener(dbPositionEventRuleRuntimeListener);
+
+        LOGGER.debug("Setting state to {} ...", CollisionServiceState.READY.toString());
         state = CollisionServiceState.READY;
     }
 
