@@ -4,8 +4,8 @@ curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert" -H "Content-Typ
 "positionEvents":[
     {
         "idEvent": "123",
-        "idOwner": 1,
-        "type": "A",
+        "idOwner": "1",
+        "name": "A",
         "timestamp": "2020-11-29 21:18:01.000+0100",
         "latitude": 42.2199298,
         "longitude": 8.7026243
@@ -20,24 +20,24 @@ curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert" -H "Content-Typ
 "positionEvents":[
     {
         "idEvent": "124",
-        "idOwner": 2,
-        "type": "B",
+        "idOwner": "2",
+        "name": "B",
         "timestamp": "2020-11-29 21:18:01.000+0100",
         "latitude": 42.2199299,
         "longitude": 8.7026244
     },
     {
         "idEvent": "125",
-        "idOwner": 1,
-        "type": "A",
+        "idOwner": "1",
+        "name": "A",
         "timestamp": "2020-11-29 21:18:02.000+0100",
         "latitude": 42.2199300,
         "longitude": 8.7026245
     },
     {
         "idEvent": "126",
-        "idOwner": 2,
-        "type": "B",
+        "idOwner": "2",
+        "name": "B",
         "timestamp": "2020-11-29 21:18:03.000+0100",
         "latitude": 42.2199301,
         "longitude": 8.7026246

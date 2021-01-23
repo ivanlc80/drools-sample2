@@ -78,7 +78,7 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
                 PositionEventEntity entity = new PositionEventEntity(
                         pe.getIdEvent(),
                         pe.getIdOwner(),
-                        pe.getType(),
+                        pe.getName(),
                         pe.getTimestamp(),
                         pe.getLatitude(),
                         pe.getLongitude()
@@ -124,7 +124,7 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
                 PositionEventEntity entity = new PositionEventEntity(
                         pe.getIdEvent(),
                         pe.getIdOwner(),
-                        pe.getType(),
+                        pe.getName(),
                         pe.getTimestamp(),
                         pe.getLatitude(),
                         pe.getLongitude()

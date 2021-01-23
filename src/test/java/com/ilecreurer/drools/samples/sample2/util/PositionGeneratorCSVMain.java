@@ -55,7 +55,7 @@ public class PositionGeneratorCSVMain {
 
                     // A people are on the same latitude
                     PositionEvent peA = new PositionEvent(UUID.randomUUID().toString(),
-                            idOwnerA, "A", date,
+                            String.valueOf(idOwnerA), "A", date,
                             positionTopLeft[0], positionTopLeft[1] + i * deltaLon
                             );
 
@@ -67,7 +67,7 @@ public class PositionGeneratorCSVMain {
                     writeRegisterToFile(writer, peA);
 
                     PositionEvent peB = new PositionEvent(UUID.randomUUID().toString(),
-                            idOwnerB, "B", date,
+                            String.valueOf(idOwnerB), "B", date,
                             positionTopLeft[0] + i * deltaLat, positionTopLeft[1]
                             );
 
@@ -122,9 +122,9 @@ public class PositionGeneratorCSVMain {
         writer.write(',');
         writer.write(pe.getIdEvent());
         writer.write(',');
-        writer.write(String.valueOf(pe.getIdOwner()));
+        writer.write(pe.getIdOwner());
         writer.write(',');
-        writer.write(pe.getType());
+        writer.write(pe.getName());
         writer.write(',');
         writer.write(String.valueOf(pe.getLatitude()));
         writer.write(',');

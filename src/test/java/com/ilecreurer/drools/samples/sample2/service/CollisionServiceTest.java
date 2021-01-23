@@ -83,16 +83,16 @@ public class CollisionServiceTest {
         assertDoesNotThrow(() ->
         {
             List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
-            long idOwner1 = 1; String type1 = "A"; String uuidp1 = "686dfffb-2478-4bcd-b1ac-a357b183b8a";
-            long idOwner2 = 2; String type2 = "B"; String uuidp2 = "686dfffb-2478-4bcd-b1ac-a357b183b8b";
+            String idOwner1 = "1"; String name1 = "A"; String uuidp1 = "686dfffb-2478-4bcd-b1ac-a357b183b8a";
+            String idOwner2 = "2"; String name2 = "B"; String uuidp2 = "686dfffb-2478-4bcd-b1ac-a357b183b8b";
 
             for (int i = 0;  i < arPositionsOwner1.length; i++) {
-                PositionEvent pe1 = new PositionEvent(uuidp1 + i, idOwner1 ,type1,
+                PositionEvent pe1 = new PositionEvent(uuidp1 + i, idOwner1 ,name1,
                         sdf.parse(arTimesOwner1[i]),
                         arPositionsOwner1[i][0], arPositionsOwner1[i][1]);
                 positionEvents.add(pe1);
 
-                PositionEvent pe2 = new PositionEvent(uuidp2 + i, idOwner2 ,type2,
+                PositionEvent pe2 = new PositionEvent(uuidp2 + i, idOwner2 ,name2,
                         sdf.parse(arTimesOwner2[i]),
                         arPositionsOwner2[i][0], arPositionsOwner2[i][1]);
                 positionEvents.add(pe2);

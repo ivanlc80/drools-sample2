@@ -25,21 +25,21 @@ public class PositionEvent extends Position {
      * Constructor.
      * @param idEventParam the idEvent.
      * @param idOwnerParam the idOwner.
-     * @param typeParam the type.
+     * @param nameParam the name.
      * @param timestampParam the timestamp.
      * @param latitudeParam the latitude.
      * @param longitudeParam the longitude.
      */
     public PositionEvent(final String idEventParam,
-            final long idOwnerParam,
-            final String typeParam,
+            final String idOwnerParam,
+            final String nameParam,
             final Date timestampParam,
             final double latitudeParam,
             final double longitudeParam) {
         super(latitudeParam, longitudeParam);
         this.idEvent = idEventParam;
         this.idOwner = idOwnerParam;
-        this.type = typeParam;
+        this.name = nameParam;
         this.timestamp = timestampParam;
     }
 
@@ -51,12 +51,12 @@ public class PositionEvent extends Position {
     /**
      * Owner.
      */
-    private long idOwner;
+    private String idOwner;
 
     /**
-     * Owner type.
+     * Owner name.
      */
-    private String type;
+    private String name;
 
     /**
      * Timestamp.
@@ -80,29 +80,29 @@ public class PositionEvent extends Position {
     /**
      * @return the idOwner
      */
-    public long getIdOwner() {
+    public String getIdOwner() {
         return idOwner;
     }
 
     /**
      * @param idOwnerParam the idOwner to set
      */
-    public void setIdOwner(final long idOwnerParam) {
+    public void setIdOwner(final String idOwnerParam) {
         this.idOwner = idOwnerParam;
     }
 
     /**
-     * @return the type
+     * @return the name
      */
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param typeParam the type to set
+     * @param nameParam the name to set
      */
-    public void setType(final String typeParam) {
-        this.type = typeParam;
+    public void setName(final String nameParam) {
+        this.name = nameParam;
     }
 
     /**
