@@ -5,6 +5,12 @@ package com.ilecreurer.drools.samples.sample2.controller;
  * @author ilecreurer.
  */
 public enum ErrorCode {
+
+    /**
+     * Service error.
+     */
+    SERVICE_ERROR(10),
+
     /**
      * Missing position events attribute.
      */

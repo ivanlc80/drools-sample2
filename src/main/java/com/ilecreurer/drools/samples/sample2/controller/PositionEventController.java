@@ -1,5 +1,13 @@
 package com.ilecreurer.drools.samples.sample2.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -11,8 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 import com.ilecreurer.drools.samples.sample2.service.CollisionService;
 import com.ilecreurer.drools.samples.sample2.service.CollisionServiceException;
 
@@ -21,7 +32,7 @@ import com.ilecreurer.drools.samples.sample2.service.CollisionServiceException;
  * @author ilecreurer.
  */
 @RestController
-@RequestMapping("/events/insert")
+@RequestMapping("/events")
 public class PositionEventController {
 
     /**
@@ -35,7 +46,7 @@ public class PositionEventController {
     @Autowired
     private CollisionService collisionService;
 
-    @PostMapping(value = "",
+    @PostMapping(value = "/insert",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public final ResponseEntity<ResponseMessage> insertPositionEvents(
@@ -43,8 +54,8 @@ public class PositionEventController {
             final HttpServletResponse response) {
 
 
-        LOGGER.info("insertPositionEvents...");
-        LOGGER.info("numberItems: {}", payload.getNumberItems());
+        LOGGER.debug("Entering insertPositionEvents...");
+        LOGGER.debug("numberItems: {}", payload.getNumberItems());
 
         if (payload.getPositionEvents() == null) {
             LOGGER.warn("Missing positionEvents attribute");
@@ -68,18 +79,90 @@ public class PositionEventController {
                     HttpStatus.BAD_REQUEST);
         }
         if (payload.getPositionEvents() != null && payload.getPositionEvents().size() > 0) {
-            LOGGER.info("timestamp: {}", payload.getPositionEvents().get(0).getTimestamp());
+            LOGGER.debug("timestamp: {}", payload.getPositionEvents().get(0).getTimestamp());
         }
 
         try {
             collisionService.insertPositionEvents(payload.getPositionEvents());
         } catch (CollisionServiceException e) {
-            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(), 0),
+            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(),
+                    ErrorCode.SERVICE_ERROR.getCode()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(), 0),
+            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(),
+                    ErrorCode.SERVICE_ERROR.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
+
+        return new ResponseEntity<>(new ResponseMessage("Success", 0),
+                HttpStatus.ACCEPTED);
+    }
+
+
+    @PostMapping("/insert/csv")
+    public final ResponseEntity<ResponseMessage> insertPositionEventsCSV(
+            @RequestParam("file") MultipartFile file) {
+        LOGGER.debug("Entering insertPositionEventsCSV...");
+        if (file == null) {
+            return new ResponseEntity<>(new ResponseMessage("Invalid payload: file is null",
+                    ErrorCode.SERVICE_ERROR.getCode()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        int registers = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+        try (BufferedReader fileReader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), "UTF-8")) ) {
+
+            String[] ar;
+            String line;
+            List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
+            while ((line = fileReader.readLine()) != null) {
+                ar = line.split(",");
+                if (ar.length != 6) {
+                    return new ResponseEntity<>(new ResponseMessage("Missing positionEvents attribute",
+                            ErrorCode.MISSING_POSITION_EVENTS_ATTR.getCode()),
+                            HttpStatus.BAD_REQUEST);
+                }
+
+                //timestampAsString = ar[0]
+                //idEvent = ar[1]
+                //idOwner = ar[2]
+                //name = ar[3]
+                //latitudeAsString = ar[4]
+                //longitudeAsString = ar[5]
+                PositionEvent pe = new PositionEvent(
+                        ar[1], ar[2], ar[3], sdf.parse(ar[0]),
+                        Double.parseDouble(ar[4]), Double.parseDouble(ar[5])
+                        );
+                positionEvents.add(pe);
+                collisionService.insertPositionEvents(positionEvents);
+
+                positionEvents.clear();
+                registers++;
+            }
+
+
+        } catch (IOException e) {
+            return new ResponseEntity<>(new ResponseMessage("Failed to read file",
+                    ErrorCode.SERVICE_ERROR.getCode()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (ParseException e) {
+            return new ResponseEntity<>(
+                    new ResponseMessage("Invalid positionEvents attribute: " + e.getMessage(),
+                    ErrorCode.MISSING_POSITION_EVENTS_ATTR.getCode()),
+                    HttpStatus.BAD_REQUEST);
+        } catch (CollisionServiceException e) {
+            return new ResponseEntity<>(new ResponseMessage("Failed: " + e.getMessage(),
+                    ErrorCode.SERVICE_ERROR.getCode()),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new ResponseMessage("Invalid payload: " + e.getMessage(),
+                    ErrorCode.SERVICE_ERROR.getCode()),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        LOGGER.debug("inserted {} registers", registers);
 
         return new ResponseEntity<>(new ResponseMessage("Success", 0),
                 HttpStatus.ACCEPTED);
