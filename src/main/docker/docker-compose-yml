@@ -1,0 +1,17 @@
+version: '3.1'
+services:
+  app:
+    image: ilecreurer/drools-sample2/postgresql:1.0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbpostgresql
+
+  dbpostgresql:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres_p
+      - POSTGRES_USER=postgres_u
+      - POSTGRES_DB=droolssample2db

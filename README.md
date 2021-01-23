@@ -43,18 +43,19 @@ curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert" -H "Content-Typ
 }'
 ```
 
-## Generate docker image
 
-```
-docker build -t ilecreurer/drools-sample2:1.0.0 .
-```
+## Run docker container with h2
 
-## Run docker container
+### Build image
+```
+mvn clean package
+docker build -f src/main/docker/Dockerfile-h2 -t ilecreurer/drools-sample2/h2:1.0.0 .
+```
 
 
 ### First run
 ```
-docker run -p 8080:8080 ilecreurer/drools-sample2:1.0.0
+docker run -p 8080:8080 ilecreurer/drools-sample2/h2:1.0.0
 ```
 
 ### To stop and re-run
@@ -63,7 +64,7 @@ Get the container ID:
 
 ```
 docker ps -a | grep drools
-283516fb18fe        ilecreurer/drools-sample2:1.0.0                                     "java -jar /drools-s…"   5 minutes ago       Up 3 minutes                0.0.0.0:8080->8080/tcp              naughty_golick
+283516fb18fe        ilecreurer/drools-sample2/h2:1.0.0                                     "java -jar /drools-s…"   5 minutes ago       Up 3 minutes                0.0.0.0:8080->8080/tcp              naughty_golick
 ```
 
 Start:
@@ -105,3 +106,21 @@ Stop:
 ```
 docker stop 283516fb18fe
 ```
+
+
+## Run docker container with postgresql
+
+### Build image
+```
+mvn clean package -Ppostgresql
+docker build -f src/main/docker/Dockerfile-postgresql -t ilecreurer/drools-sample2/postgresql:1.0.0 .
+```
+
+### Run with docker-compose
+
+```
+cd src/main/docker
+docker-compose -f docker-compose.yml up
+```
+
+
