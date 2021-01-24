@@ -100,7 +100,7 @@ public class PositionEventController {
 
 
     @PostMapping("/insert/csv")
-    public final ResponseEntity<ResponseMessage> insertPositionEventsCSV(
+    public final ResponseEntity<ResponseMessage> insertPositionEventsCSV(final
             @RequestParam("file") MultipartFile file) {
         LOGGER.debug("Entering insertPositionEventsCSV...");
         if (file == null) {
@@ -112,29 +112,26 @@ public class PositionEventController {
         int registers = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
         try (BufferedReader fileReader = new BufferedReader(
-                new InputStreamReader(file.getInputStream(), "UTF-8")) ) {
+                new InputStreamReader(file.getInputStream(), "UTF-8"))) {
 
             String[] ar;
             String line;
             List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
             while ((line = fileReader.readLine()) != null) {
                 ar = line.split(",");
+                // CHECKSTYLE:OFF - Reason: Allow basic array index
                 if (ar.length != 6) {
                     return new ResponseEntity<>(new ResponseMessage("Missing positionEvents attribute",
                             ErrorCode.MISSING_POSITION_EVENTS_ATTR.getCode()),
                             HttpStatus.BAD_REQUEST);
                 }
 
-                //timestampAsString = ar[0]
-                //idEvent = ar[1]
-                //idOwner = ar[2]
-                //name = ar[3]
-                //latitudeAsString = ar[4]
-                //longitudeAsString = ar[5]
                 PositionEvent pe = new PositionEvent(
                         ar[1], ar[2], ar[3], sdf.parse(ar[0]),
                         Double.parseDouble(ar[4]), Double.parseDouble(ar[5])
                         );
+                // CHECKSTYLE:ON
+
                 positionEvents.add(pe);
                 collisionService.insertPositionEvents(positionEvents);
 
