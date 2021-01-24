@@ -34,14 +34,14 @@ public class CollisionServiceTest2 {
     void insertMutiplePositionEvents(
             String timestampAsString,
             String idEvent,
-            String idOwnerAsString,
-            String type,
+            String idOwner,
+            String name,
             String latitudeAsString,
             String longitudeAsString) {
         try {
             List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
             PositionEvent pe = new PositionEvent(
-                    idEvent, Long.parseLong(idOwnerAsString), type, sdf.parse(timestampAsString),
+                    idEvent, idOwner, name, sdf.parse(timestampAsString),
                     Double.parseDouble(latitudeAsString), Double.parseDouble(longitudeAsString)
                     );
             positionEvents.add(pe);

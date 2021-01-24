@@ -49,13 +49,13 @@ public class CollisionServiceTest3 {
 
                 String timestampAsString = ar[0];
                 String idEvent = ar[1];
-                String idOwnerAsString = ar[2];
-                String type = ar[3];
+                String idOwner = ar[2];
+                String name = ar[3];
                 String latitudeAsString = ar[4];
                 String longitudeAsString = ar[5];
 
                 PositionEvent pe = new PositionEvent(
-                        idEvent, Long.parseLong(idOwnerAsString), type, sdf.parse(timestampAsString),
+                        idEvent, idOwner, name, sdf.parse(timestampAsString),
                         Double.parseDouble(latitudeAsString), Double.parseDouble(longitudeAsString)
                         );
                 positionEvents.add(pe);

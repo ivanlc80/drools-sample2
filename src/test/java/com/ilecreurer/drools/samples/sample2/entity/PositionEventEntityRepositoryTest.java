@@ -39,8 +39,8 @@ public class PositionEventEntityRepositoryTest {
         Date d1 = new Date();
         PositionEventEntity entity1 = new PositionEventEntity();
         entity1.setIdEvent("1");
-        entity1.setIdOwner(1);
-        entity1.setType("A");
+        entity1.setIdOwner("1");
+        entity1.setName("A");
         entity1.setTimestamp(d1);
         entity1.setLatitude(42.2199298);
         entity1.setLongitude(8.7026243);
@@ -51,8 +51,8 @@ public class PositionEventEntityRepositoryTest {
         Date d2 = new Date(d1.getTime() + 1000);
         PositionEventEntity entity2 = new PositionEventEntity();
         entity2.setIdEvent("2");
-        entity2.setIdOwner(2);
-        entity2.setType("B");
+        entity2.setIdOwner("2");
+        entity2.setName("B");
         entity2.setTimestamp(d2);
         entity2.setLatitude(42.2199299);
         entity2.setLongitude(8.7026244);

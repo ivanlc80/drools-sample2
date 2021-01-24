@@ -24,6 +24,7 @@ import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntity;
 import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntityRepository;
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 import com.ilecreurer.drools.samples.sample2.listener.DBPositionEventRuleRuntimeListener;
+import com.ilecreurer.drools.samples.sample2.util.Constants;
 
 /**
  * CollisionServiceImpl class.
@@ -95,6 +96,7 @@ public class CollisionServiceImpl implements CollisionService {
             LOGGER.info("Creating kieSession...");
             this.kieSession = kieContainer.newKieSession("ksessionceprules");
             this.kieSession.setGlobal("LOGGER_DRL", LOGGER_DRL);
+            this.kieSession.setGlobal("MIN_DIST", Constants.MIN_DIST);
 
             LOGGER.info("Creating entryPoint...");
             this.entryPoint = this.kieSession.getEntryPoint("PositionEventStream");
@@ -141,7 +143,7 @@ public class CollisionServiceImpl implements CollisionService {
             PositionEvent pe = new PositionEvent(
                     entity.getIdEvent(),
                     entity.getIdOwner(),
-                    entity.getType(),
+                    entity.getName(),
                     entity.getTimestamp(),
                     entity.getLatitude(),
                     entity.getLongitude()
