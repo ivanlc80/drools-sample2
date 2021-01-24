@@ -5,7 +5,8 @@
 - [X] Add docker image generation
 - [X] Add docker-compose with POSTGRES database (using profiles)
 - [X] Refactor event object
-- [ ] CSV upload
+- [X] CSV upload
+- [X] Change kession to use fireUntilHalt on own thread
 - [ ] Add kubernetes singleton pod:
  - https://www.magalix.com/blog/kubernetes-patterns-singleton-application-pattern
  - https://discuss.kubernetes.io/t/connecting-to-an-external-mysql-database/8201/8

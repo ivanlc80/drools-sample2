@@ -44,3 +44,6 @@ curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert" -H "Content-Typ
     }
 ]
 }'
+
+
+curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert/csv" --form file='@src/test/resources/data1.csv'
