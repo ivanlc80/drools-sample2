@@ -87,6 +87,11 @@ public class CollisionServiceImpl implements CollisionService {
      */
     private DBPositionEventRuleRuntimeListener dbPositionEventRuleRuntimeListener;
 
+    /**
+     * Thread object for ksession.
+     */
+    private Thread threadSession;
+
     @PostConstruct
     void onStart() throws CollisionServiceException {
         try {
@@ -110,6 +115,14 @@ public class CollisionServiceImpl implements CollisionService {
             LOGGER.debug("Check number of facts...");
             long fc = this.kieSession.getFactCount();
             LOGGER.debug("fc: {}", fc);
+
+            threadSession = new Thread() {
+                public void run() {
+                    LOGGER.debug("Starting session thread...");
+                    kieSession.fireUntilHalt();
+                }
+            };
+            threadSession.start();
 
             state = CollisionServiceState.READY;
         } catch (Exception e) {
@@ -223,8 +236,8 @@ public class CollisionServiceImpl implements CollisionService {
                             positionEvent.getTimestamp().getTime(),
                             clock.getCurrentTime());
                 }
-                LOGGER.debug("Firing rules!");
-                kieSession.fireAllRules();
+                //LOGGER.debug("Firing rules!");
+                //kieSession.fireAllRules();
             }
 
         } catch (IllegalArgumentException e) {
