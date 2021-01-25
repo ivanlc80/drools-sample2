@@ -7,6 +7,7 @@
 - [X] Refactor event object
 - [X] CSV upload
 - [X] Change kession to use fireUntilHalt on own thread
-- [ ] Add kubernetes singleton pod:
+- [X] Add kubernetes support
+
  - https://www.magalix.com/blog/kubernetes-patterns-singleton-application-pattern
  - https://discuss.kubernetes.io/t/connecting-to-an-external-mysql-database/8201/8

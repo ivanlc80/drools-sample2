@@ -30,7 +30,7 @@ public class DataLoader implements ApplicationRunner {
         try {
             collisionService.preloadSession();
         } catch (CollisionServiceException e) {
-            LOGGER.error("Failed to prepload the sesion", e);
+            LOGGER.error("Failed to prepload the session", e);
         }
     }
 
