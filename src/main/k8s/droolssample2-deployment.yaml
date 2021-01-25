@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: droolssample2
+spec:
+  selector:
+    matchLabels:
+      app: droolssample2
+  template:
+    metadata:
+      labels:
+        app: droolssample2
+    spec:
+      containers:
+      - name: droolssample2
+        image: ilecreurer/drools-sample2/postgresql:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POSTGRES_HOST
+          value: droolssample2db
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DATABASE
+          value: droolssample2db
+        - name: POSTGRES_USER
+          value: postgres_u
+        - name: POSTGRES_PASSWORD
+          value: postgres_p
