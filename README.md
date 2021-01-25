@@ -111,8 +111,16 @@ docker stop 283516fb18fe
 ## Run docker container with postgresql
 
 ### Build image
+
+Build using the profile `postgresql`:
+
 ```
 mvn clean package -Ppostgresql
+```
+
+Make sure the `.` is included in the command:
+
+```
 docker build -f src/main/docker/Dockerfile-postgresql -t ilecreurer/drools-sample2/postgresql:1.0.0 .
 ```
 

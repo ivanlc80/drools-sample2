@@ -3,6 +3,7 @@ package com.ilecreurer.drools.samples.sample2.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,31 +25,37 @@ public class PositionEventEntity implements Serializable {
      * idTransaction.
      */
     @Id
+    @Column(name = "ID_EVENT")
     private String idEvent;
 
     /**
      * Owner.
      */
+    @Column(name = "ID_OWNER")
     private String idOwner;
 
     /**
      * Owner name.
      */
+    @Column(name = "NAME")
     private String name;
 
     /**
      * Timestamp.
      */
+    @Column(name = "EVENT_TIMESTAMP")
     private Date timestamp;
 
     /**
      * Latitude.
      */
+    @Column(name = "LATITUDE")
     private double latitude;
 
     /**
      * Longitude.
      */
+    @Column(name = "LONGITUDE")
     private double longitude;
 
     /**
