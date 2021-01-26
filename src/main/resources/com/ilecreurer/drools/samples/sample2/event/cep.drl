@@ -42,5 +42,9 @@ when
     $pe2 : PositionEvent(this.getIdOwner().compareTo($pe1.getIdOwner()) > 0,
                         $pe1.distanceTo(this) < MIN_DIST.doubleValue()) from entry-point "PositionEventStream"
 then
-    LOGGER_DRL.warn("{} is too close to {}", $pe1.getIdOwner(), $pe2.getIdOwner());
+    LOGGER_DRL.warn("[{} - {}] is too close to [{} - {}] . Time diff: {} s",
+        $pe1.getIdEvent(), $pe1.getIdOwner(),
+        $pe2.getIdEvent(), $pe2.getIdOwner(),
+        ($pe1.getTimestamp().getTime() - $pe2.getTimestamp().getTime())/1000
+    );
 end

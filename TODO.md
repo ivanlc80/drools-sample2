@@ -8,6 +8,8 @@
 - [X] CSV upload
 - [X] Change kession to use fireUntilHalt on own thread
 - [X] Add kubernetes support
-
+- [X] Log potential collisions to rotation files
+- [ ] Add Volume for database to maintain data after shutdown
+- [ ] Enforce singleton pattern
  - https://www.magalix.com/blog/kubernetes-patterns-singleton-application-pattern
  - https://discuss.kubernetes.io/t/connecting-to-an-external-mysql-database/8201/8
