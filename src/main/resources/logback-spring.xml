@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-
     <appender name="Console"
         class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %d{ISO8601} %-5level %C{1.} %M: %msg%n%throwable
+                %d{ISO8601} %-5level %c{20} %M: %msg%n%throwable
             </Pattern>
         </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/droolssample2-cep.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+          <fileNamePattern>log/droolssample2-cep.log.%i</fileNamePattern>
+          <minIndex>1</minIndex>
+          <maxIndex>3</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+          <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+          <pattern>%d{ISO8601} %-5level - %msg%n</pattern>
+        </encoder>
     </appender>
 
 
@@ -17,12 +32,17 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="org.hibernate.jpa" level="debug" additivity="false">
+    <logger name="org.hibernate.jpa" level="info" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 
     <logger name="com.ilecreurer.drools.samples.sample2" level="debug" additivity="false">
         <appender-ref ref="Console" />
+    </logger>
+
+    <!-- LOG rule messages to file appender -->
+    <logger name="com.ilecreurer.drools.samples.sample2.event.Cep" level="warn" additivity="true">
+        <appender-ref ref="FILE" />
     </logger>
 
 </configuration>
