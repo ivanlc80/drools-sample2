@@ -32,6 +32,8 @@ public class DistanceTest {
             Position p1 = new Position(arPositionsOwner1[i][0], arPositionsOwner1[i][1]);
             Position p2 = new Position(arPositionsOwner2[i][0], arPositionsOwner1[i][1]);
             assertDoesNotThrow(() -> {System.out.println(p1.distanceTo(p2));});
+            assertDoesNotThrow(() -> {System.out.println(p1.diffLat(p2));});
+            assertDoesNotThrow(() -> {System.out.println(p1.diffLong(p2));});
         }
     }
 }

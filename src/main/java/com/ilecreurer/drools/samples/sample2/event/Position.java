@@ -89,12 +89,37 @@ public class Position implements Serializable {
     }
 
     /**
+     * Method to get the difference in latitude between two points on the sphere.
+     * @param p2 the second point.
+     * @return The absolute value of the difference between the latitude.
+     * @throws IllegalArgumentException when the positions have incorrect data.
+     */
+    public double diffLat(final Position p2) throws IllegalArgumentException {
+        if (p2 == null) throw new IllegalArgumentException("p2 is null");
+
+        return Math.abs(this.getLatitude() - p2.getLatitude());
+    }
+
+    /**
+     * Method to get the difference in longitude between two points on the sphere.
+     * @param p2 the second point.
+     * @return The absolute value of the difference between the longitudes.
+     * @throws IllegalArgumentException when the positions have incorrect data.
+     */
+    public double diffLong(final Position p2) throws IllegalArgumentException {
+        if (p2 == null) throw new IllegalArgumentException("p2 is null");
+
+        return Math.abs(this.getLongitude() - p2.getLongitude());
+    }
+
+    /**
      * Method to get the distance between two points on the sphere.
      * @param p2 the second point.
      * @return The distance in metres.
      * @throws IllegalArgumentException when the positions have incorrect data.
      */
     public double distanceTo(final Position p2) throws IllegalArgumentException {
+        if (p2 == null) throw new IllegalArgumentException("p2 is null");
         if (this.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p1.latitude is greater than 90");
         if (this.getLatitude() < -MAX_LAT) throw new IllegalArgumentException("p1.latitude is less than 90");
         if (p2.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p2.latitude is greater than 90");

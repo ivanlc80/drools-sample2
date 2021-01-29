@@ -116,14 +116,15 @@ public class CollisionServiceImpl implements CollisionService {
             long fc = this.kieSession.getFactCount();
             LOGGER.debug("fc: {}", fc);
 
-            threadSession = new Thread() {
+            /*threadSession = new Thread() {
                 public void run() {
                     LOGGER.debug("Starting session thread...");
                     kieSession.fireUntilHalt();
                 }
             };
-            threadSession.start();
+            threadSession.start();*/
 
+            LOGGER.info("Setting state to {} ...", CollisionServiceState.READY.toString());
             state = CollisionServiceState.READY;
         } catch (Exception e) {
             throw new CollisionServiceException("Failed to start", e);
@@ -174,7 +175,7 @@ public class CollisionServiceImpl implements CollisionService {
             throws CollisionServiceException, IllegalArgumentException {
         LOGGER.info("Entering preloadSession...");
 
-        LOGGER.debug("Setting state to {} ...", CollisionServiceState.LOADING_EVENTS.toString());
+        LOGGER.info("Setting state to {} ...", CollisionServiceState.LOADING_EVENTS.toString());
         state = CollisionServiceState.LOADING_EVENTS;
 
         LOGGER.debug("Creating dbPositionEventRuleRuntimeListener (inactive)...");
@@ -195,7 +196,7 @@ public class CollisionServiceImpl implements CollisionService {
         LOGGER.debug("Adding dbPositionEventRuleRuntimeListener to kieSession...");
         this.kieSession.addEventListener(dbPositionEventRuleRuntimeListener);
 
-        LOGGER.debug("Setting state to {} ...", CollisionServiceState.READY.toString());
+        LOGGER.info("Setting state to {} ...", CollisionServiceState.READY.toString());
         state = CollisionServiceState.READY;
     }
 
@@ -208,7 +209,9 @@ public class CollisionServiceImpl implements CollisionService {
     @Override
     public void insertPositionEvents(final List<PositionEvent> positionEvents)
             throws CollisionServiceException, IllegalArgumentException {
-        LOGGER.debug("Entering insertPositionEvents...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Entering insertPositionEvents...");
+        }
         if (positionEvents == null)
             throw new IllegalArgumentException("positionEvents is null");
         if (positionEvents.isEmpty())
@@ -218,26 +221,33 @@ public class CollisionServiceImpl implements CollisionService {
             throw new CollisionServiceException("Service is in state:" + this.state);
 
         try {
-            LOGGER.debug("Check number of facts...");
-            long fc = this.kieSession.getFactCount();
-            LOGGER.debug("fc: {}", fc);
-
+            long fc = this.entryPoint.getFactCount();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("fc: {}", fc);
+            }
             for (PositionEvent positionEvent: positionEvents) {
-                LOGGER.debug("Inserting transaction...");
                 entryPoint.insert(positionEvent);
 
                 long advanceTime = positionEvent.getTimestamp().getTime() - clock.getCurrentTime();
                 if (advanceTime > 0) {
-                    LOGGER.debug("Advancing time by {}", advanceTime);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Advancing time by {}", advanceTime);
+                    }
                     clock.advanceTime(advanceTime, TimeUnit.MILLISECONDS);
-                    LOGGER.debug("Clock time: {}", sdf.format(clock.getCurrentTime()));
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Clock time: {}", sdf.format(clock.getCurrentTime()));
+                    }
                 } else {
-                    LOGGER.debug("Not advancing time. transaction time: {}, clock time: {}",
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Not advancing time. transaction time: {}, clock time: {}",
                             positionEvent.getTimestamp().getTime(),
                             clock.getCurrentTime());
+                    }
                 }
-                //LOGGER.debug("Firing rules!");
-                //kieSession.fireAllRules();
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Firing rules!");
+                }
+                kieSession.fireAllRules();
             }
 
         } catch (IllegalArgumentException e) {

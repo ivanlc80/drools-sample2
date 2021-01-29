@@ -10,28 +10,38 @@ declare PositionEvent
   @timestamp( timestamp )
   //@duration( callDuration )
   //@expires( 1h35m )
-  //@expires( 1s )
+  //@expires( 2m )
 end
 
-rule "insertion"
-salience 100
-when
-    $pe : PositionEvent() from entry-point "PositionEventStream"
-then
-    LOGGER_DRL.debug("New PE: {}, {}", $pe.getIdEvent(),
-        $pe.getIdOwner());
-end
+//rule "insertion"
+//salience 100
+//when
+//    $pe : PositionEvent() from entry-point "PositionEventStream"
+//then
+//    LOGGER_DRL.debug("New PE: {}, {}", $pe.getIdEvent(),
+//        $pe.getIdOwner());
+//end
 
 rule "substitution"
 salience 90
 when
-    $pe : PositionEvent() from entry-point "PositionEventStream"
-    $previousPe : PositionEvent(this.idOwner == $pe.idOwner,
-        this.timestamp < $pe.timestamp) from entry-point "PositionEventStream"
+    $pe1 : PositionEvent() from entry-point "PositionEventStream"
+    $pe2 : PositionEvent(
+                this.getIdOwner().equals($pe1.getIdOwner()),
+                !this.getIdEvent().equals($pe1.getIdEvent())
+           ) from entry-point "PositionEventStream"
 then
-    LOGGER_DRL.debug("Remove PE: {}, {}", $previousPe.getIdEvent(),
-        $previousPe.getIdOwner());
-    retract($previousPe);
+    if ($pe1.getTimestamp().getTime() < $pe2.getTimestamp().getTime()) {
+        if (LOGGER_DRL.isDebugEnabled()) {
+            LOGGER_DRL.debug("Remove PE: [{} - {}]", $pe1.getIdEvent(), $pe1.getIdOwner());
+        }
+        delete($pe1);
+    } else {
+        if (LOGGER_DRL.isDebugEnabled()) {
+            LOGGER_DRL.debug("Remove PE: [{} - {}]", $pe2.getIdEvent(), $pe2.getIdOwner());
+        }
+        delete($pe2);
+    }
 end
 
 
@@ -40,7 +50,10 @@ salience 80
 when
     $pe1 : PositionEvent() from entry-point "PositionEventStream"
     $pe2 : PositionEvent(this.getIdOwner().compareTo($pe1.getIdOwner()) > 0,
-                        $pe1.distanceTo(this) < MIN_DIST.doubleValue()) from entry-point "PositionEventStream"
+                        ($pe1.diffLat(this) < 1.0 &&
+                        $pe1.diffLong(this) < 1.0 &&
+                        $pe1.distanceTo(this) < MIN_DIST.doubleValue())
+           ) from entry-point "PositionEventStream"
 then
     LOGGER_DRL.warn("[{} - {}] is too close to [{} - {}] . Time diff: {} s",
         $pe1.getIdEvent(), $pe1.getIdOwner(),
