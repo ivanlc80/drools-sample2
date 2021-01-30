@@ -9,6 +9,8 @@
 - [X] Change kession to use fireUntilHalt on own thread
 - [X] Add kubernetes support
 - [X] Log potential collisions to rotation files
+- [ ] Restrict area of collision detection using environment variables
+- [ ] Pass database config via environment variables
 - [ ] Add Volume for database to maintain data after shutdown
 - [ ] Enforce singleton pattern
  - https://www.magalix.com/blog/kubernetes-patterns-singleton-application-pattern

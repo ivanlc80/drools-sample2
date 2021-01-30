@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 import com.ilecreurer.drools.samples.sample2.service.CollisionService;
 import com.ilecreurer.drools.samples.sample2.service.CollisionServiceException;
+import com.ilecreurer.drools.samples.sample2.util.Constants;
 
 /**
  * TransactionController class.
@@ -109,10 +110,19 @@ public class PositionEventController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        int registers = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
         try (BufferedReader fileReader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+
+            long t0 = System.currentTimeMillis();
+            long t1 = t0;
+            long delta = 0;
+            int registers = 0;
+
+            long t0Local = t0;
+            long t1Local = t0;
+            long deltaLocal = 0;
+            int registersLocal = 0;
 
             String[] ar;
             String line;
@@ -133,12 +143,50 @@ public class PositionEventController {
                 // CHECKSTYLE:ON
 
                 positionEvents.add(pe);
-                collisionService.insertPositionEvents(positionEvents);
 
-                positionEvents.clear();
+                if (positionEvents.size() >= Constants.MAX_POSITION_EVENTS_SIZE) {
+                    collisionService.insertPositionEvents(positionEvents);
+                    positionEvents.clear();
+                }
                 registers++;
+                registersLocal++;
+
+                if (registers % Constants.REGISTERS_LOG_BLOCK_SIZE == 0) {
+                    t1 = System.currentTimeMillis();
+                    delta = t1 - t0;
+
+                    t1Local = t1;
+                    deltaLocal = t1Local - t0Local;
+                    LOGGER.info("Added {} regs in {} ms, avg: {} regs/s, total regs: {}, global average: {}",
+                            registersLocal,
+                            deltaLocal,
+                            ((float) registersLocal / (float) deltaLocal) * Constants.MILLIS_IN_SECOND,
+                            registers,
+                            ((float) registers / (float) delta) * Constants.MILLIS_IN_SECOND
+                    );
+
+                    registersLocal = 0;
+                    t0Local = t1Local;
+                }
             }
 
+            collisionService.insertPositionEvents(positionEvents);
+            positionEvents.clear();
+
+            t1 = System.currentTimeMillis();
+            delta = t1 - t0;
+
+            t1Local = t1;
+            deltaLocal = t1Local - t0Local;
+            LOGGER.info("Added {} regs in {} ms, avg: {} regs/s, total regs: {}, global average: {}",
+                    registersLocal,
+                    deltaLocal,
+                    ((float) registersLocal / (float) deltaLocal) * Constants.MILLIS_IN_SECOND,
+                    registers,
+                    ((float) registers / (float) delta) * Constants.MILLIS_IN_SECOND
+            );
+
+            LOGGER.debug("inserted {} registers", registers);
 
         } catch (IOException e) {
             return new ResponseEntity<>(new ResponseMessage("Failed to read file",
@@ -158,8 +206,6 @@ public class PositionEventController {
                     ErrorCode.SERVICE_ERROR.getCode()),
                     HttpStatus.BAD_REQUEST);
         }
-
-        LOGGER.debug("inserted {} registers", registers);
 
         return new ResponseEntity<>(new ResponseMessage("Success", 0),
                 HttpStatus.ACCEPTED);

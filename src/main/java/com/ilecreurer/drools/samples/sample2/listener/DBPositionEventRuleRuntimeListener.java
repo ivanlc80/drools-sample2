@@ -85,7 +85,7 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
                 );
                 positionEventEntityRepository.save(entity);
             } catch (Exception e) {
-                LOGGER.error("Failed to insert entity", e);
+                LOGGER.error("Failed to insert entity: {}", e.getMessage());
             }
         }
     }
@@ -104,7 +104,7 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
                 LOGGER.debug("Deleting event: {}", pe.getIdEvent());
                 positionEventEntityRepository.deleteById(pe.getIdEvent());
             } catch (Exception e) {
-                LOGGER.error("Failed to delete entity", e);
+                LOGGER.error("Failed to delete entity: {}", e.getMessage());
             }
         }
     }
@@ -131,7 +131,7 @@ public class DBPositionEventRuleRuntimeListener extends DefaultRuleRuntimeEventL
                 );
                 positionEventEntityRepository.save(entity);
             } catch (Exception e) {
-                LOGGER.error("Failed to delete entity", e);
+                LOGGER.error("Failed to delete entity: {}", e.getMessage());
             }
         }
     }
