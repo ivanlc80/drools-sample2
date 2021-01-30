@@ -435,16 +435,16 @@ Go the downloads folder and save the file there. Extract the csv from the zip fi
 ```
 
 The file `AIS_2020_01_01.transformed.csv` will be generated.
-As the file is huge (aprox. 700MB), we have extracted the first 10 minutes of data using
+As the file is huge (aprox. 700MB), we have extracted the first 20 minutes of data using
 
 ```
-grep -P "2020\-01\-01 00\:00" AIS_2020_01_01.transformed.csv > AIS_2020_01_01_00_00.transformed.csv
+grep -P "2020\-01\-01 00\:0[01]" AIS_2020_01_01.transformed.csv > AIS_2020_01_01_00_0__00_2.transformed.csv
 ```
 
 Then we can test the CSV upload method:
 
 ```
-curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert/csv" --form file='@AIS_2020_01_01_00_0.transformed.csv'
+curl -ik -X POST "http://localhost:8080/ms-cde/v1/events/insert/csv" --form file='@AIS_2020_01_01_00_0__00_2.transformed.csv'
 ```
 
 Entering the container containing the application we can view the collision log:
@@ -455,32 +455,27 @@ docker exec -it <container id> sh
 # tail -F droolssample2-cep.log
 
 ...
-2021-01-29 18:54:35,975 WARN  - [63d1f69c-750e-415f-b38e-e0134e664580 - 316005613] is too close to [e09da747-fd8e-4c81-a483-ae3632ccccd4 - 316005649] . Time diff: 0 s
-2021-01-29 18:54:35,975 WARN  - [e8161d87-24a2-48f0-b0dc-8747c15326c0 - 316005625] is too close to [e09da747-fd8e-4c81-a483-ae3632ccccd4 - 316005649] . Time diff: -22 s
-2021-01-29 18:54:36,357 WARN  - [66c619ad-c4f8-4e67-81c2-7f691fa12ff1 - 367685620] is too close to [87f3a796-7641-4bb1-8091-c0b29d01349f - 367710250] . Time diff: 2 s
-2021-01-29 18:54:36,436 WARN  - [82b4efcc-36f0-41bf-895f-d5c0d1b783bd - 338218374] is too close to [46ba0878-ae8e-4def-bb34-a2c75b028ac6 - 368051880] . Time diff: 108 s
-2021-01-29 18:54:36,437 WARN  - [82b4efcc-36f0-41bf-895f-d5c0d1b783bd - 338218374] is too close to [eba722ac-000b-4f0f-84db-797948c09a3e - 367766070] . Time diff: 154 s
-2021-01-29 18:54:36,437 WARN  - [2704c64d-c307-47b2-aac5-f1d273b996ec - 316028584] is too close to [82b4efcc-36f0-41bf-895f-d5c0d1b783bd - 338218374] . Time diff: -131 s
-2021-01-29 18:54:36,587 WARN  - [eff7b12f-20bf-4e28-9282-00c3356b764a - 338108411] is too close to [6f2596c0-7f47-4456-aa8b-5d574e5bdccd - 368027000] . Time diff: -27 s
-2021-01-29 18:54:36,587 WARN  - [53bee4bd-4143-4a4a-a10f-672990e3c3d5 - 367084860] is too close to [6f2596c0-7f47-4456-aa8b-5d574e5bdccd - 368027000] . Time diff: -42 s
-2021-01-29 18:54:36,587 WARN  - [28d996d5-3fbb-4082-a83d-efb3302443e8 - 366287850] is too close to [6f2596c0-7f47-4456-aa8b-5d574e5bdccd - 368027000] . Time diff: -34 s
-2021-01-29 18:54:36,617 WARN  - [f1976d8e-11cb-4402-b4e6-5afbcca89351 - 367466650] is too close to [dcc9958a-1369-473a-b353-4aaf9038c00e - 367594190] . Time diff: 105 s
-2021-01-29 18:54:36,763 WARN  - [69f4e9ed-7345-4ae5-919b-8c34f444f31a - 367623310] is too close to [a37d2b8e-28f8-4985-9ce3-621ec07fb340 - 367627580] . Time diff: -3 s
-2021-01-29 18:54:36,763 WARN  - [f4e6c72d-d600-41d6-9a39-777345fa80a0 - 367377380] is too close to [a37d2b8e-28f8-4985-9ce3-621ec07fb340 - 367627580] . Time diff: -40 s
-
+2021-01-30 18:57:10,067 WARN  - [89f01631-4d10-49e3-a021-e0d39be4e130 - 367516950] is too close to [562600d4-1439-493b-bddf-55dace5dbcc4 - 367618310] . Time diff: -13 s
+2021-01-30 18:57:10,067 WARN  - [a2df0899-4c99-40ef-a5dd-d7a713f0801c - 367551340] is too close to [562600d4-1439-493b-bddf-55dace5dbcc4 - 367618310] . Time diff: -25 s
+2021-01-30 18:57:10,093 WARN  - [87b0fbfa-bad7-43f3-9e26-379a7628b9eb - 367476430] is too close to [f71c4438-f04b-4546-8280-8f330ff18bf1 - 367528810] . Time diff: -56 s
+2021-01-30 18:57:10,194 WARN  - [d2079fd0-cc0d-43fe-b912-4853d19a5a1b - 366873860] is too close to [3f336531-45b0-46ef-92df-9c13063bb25c - 368092280] . Time diff: 59 s
+2021-01-30 18:57:10,194 WARN  - [7c09be67-a8db-4573-8a52-c7437bb1e034 - 366867540] is too close to [d2079fd0-cc0d-43fe-b912-4853d19a5a1b - 366873860] . Time diff: -145 s
+2021-01-30 18:57:10,207 WARN  - [2e43bbec-0f24-4480-a597-061794f594da - 368119660] is too close to [2c753917-3d34-4516-8649-609b36a64016 - 369131000] . Time diff: 40 s
+2021-01-30 18:57:10,230 WARN  - [967d41df-7389-426c-9cf9-ac6c3d281392 - 367712620] is too close to [897d9bcd-95d2-478d-86b5-453ecc279cd3 - 367714750] . Time diff: 3 s
+2021-01-30 18:57:10,230 WARN  - [baa69357-65d7-4f7f-818e-becd947bf362 - 367712610] is too close to [967d41df-7389-426c-9cf9-ac6c3d281392 - 367712620] . Time diff: -15 s
+2021-01-30 18:57:10,277 WARN  - [38c5085b-04f4-4023-ade7-19629526e969 - 367402250] is too close to [53d95a41-e64d-4586-8133-7b5d7dcc5f3d - 367759510] . Time diff: 38 s
+2021-01-30 18:57:10,278 WARN  - [38c5085b-04f4-4023-ade7-19629526e969 - 367402250] is too close to [bf50b8d8-a01b-4d85-9550-f8df64dc1098 - 367659970] . Time diff: 67 s
 ```
 
 Viewing the console log using `docker logs <container id>` of the application we can see:
 
 ```
+app_1           | 2021-01-30 18:55:35,611 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 138 regs in 1262 ms, avg: 109.350235 regs/s, total regs: 138, global average: 109.350235
 ...
-app_1           | 2021-01-29 18:51:44,868 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 31248 ms, avg: 32.00205 regs/s, total regs: 51000, global average: 39.471546
-app_1           | 2021-01-29 18:52:14,594 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 29726 ms, avg: 33.640587 regs/s, total regs: 52000, global average: 39.340416
-app_1           | 2021-01-29 18:52:45,660 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 31066 ms, avg: 32.189533 regs/s, total regs: 53000, global average: 39.17621
-app_1           | 2021-01-29 18:53:16,866 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 31206 ms, avg: 32.04512 regs/s, total regs: 54000, global average: 39.015423
-app_1           | 2021-01-29 18:53:47,137 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 30271 ms, avg: 33.034916 regs/s, total regs: 55000, global average: 38.88742
-app_1           | 2021-01-29 18:54:17,200 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 1000 regs in 30063 ms, avg: 33.263477 regs/s, total regs: 56000, global average: 38.77037
-app_1           | 2021-01-29 18:54:36,763 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 646 regs in 19563 ms, avg: 33.021523 regs/s, total regs: 56646, global average: 38.693546
+app_1           | 2021-01-30 18:57:08,606 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 102 regs in 868 ms, avg: 117.51152 regs/s, total regs: 11376, global average: 120.6913
+app_1           | 2021-01-30 18:57:09,777 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 112 regs in 1171 ms, avg: 95.64475 regs/s, total regs: 11488, global average: 120.38396
+app_1           | 2021-01-30 18:57:10,278 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: Added 52 regs in 501 ms, avg: 103.79241 regs/s, total regs: 11540, global average: 120.2973
+app_1           | 2021-01-30 18:57:10,278 INFO  c.i.d.s.s.c.PositionEventController insertPositionEventsCSV: inserted 11540 registers out of 108495
 ```
 
 On the Postgres database container we can obtain some info about the current inserted registers:
@@ -489,25 +484,28 @@ On the Postgres database container we can obtain some info about the current ins
 droolssample2db=# select count(id_owner) from POSITION_EVENT;
  count
 -------
- 10557
+   952
 (1 row)
 
 droolssample2db=# select count(distinct id_owner) from POSITION_EVENT;
  count
 -------
- 10557
+   952
 (1 row)
 ```
 
 
 Test conclusion:
-- We reach an average handling rate of  33 registers/s , ie 1980 registers/minute.
-- The reduced file contains 56646 registers for 10 minutes of positions.
-- In order to handle load the application should be able to handle over 5700 registers/minute.
+- Area is considering the East side of the US thus discarding many registers from the West side.
+- We have an average handling rate of approx. 100 registers/s or approx. 6000 registers/min.
+- The reduced file contains 108495 registers for 20 minutes of positions.
+- Inserted 11540 registers out of 108495 in less than 2 minutes.
+- By restricting the area of collision detection we can achieve a viable collision detection for a specific area.
+
 
 Performance improvements:
 - Database on another machine should vastly improve performance.
-- Reduce collision detection area and launch multiple containers each handling a specific region `[lat1, lat2] x [long1, long2]` . Using environment variables this can be achieved. The same database could shared accross the nodes.
+- The CEP has O(n x n) operations for the eviction process. Hence splitting into obvious disjoint areas imporoves the processing speed..
 
 
 ## Useful links

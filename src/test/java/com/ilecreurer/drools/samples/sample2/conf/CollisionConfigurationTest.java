@@ -12,11 +12,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CollisionConfigurationTest {
 
     @Autowired
+    private AreaProperties areaProperties;
+
+    @Autowired
     private KieContainer kieContainer;
 
     @Test
     void checkKBase() {
         KieBase kieBase = kieContainer.getKieBase("kbaseceprules");
         assertThat(kieBase).isNotNull();
+    }
+
+    @Test
+    void checkAreaProperties() {
+        assertThat(areaProperties).isNotNull();
+        assertThat(areaProperties.getMaxLatitude()).isEqualTo(80.0d);
     }
 }

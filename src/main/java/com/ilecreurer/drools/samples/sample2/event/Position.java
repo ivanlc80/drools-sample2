@@ -2,30 +2,13 @@ package com.ilecreurer.drools.samples.sample2.event;
 
 import java.io.Serializable;
 
+import com.ilecreurer.drools.samples.sample2.util.Constants;
+
 /**
  * Position class.
  * @author ilecreurer.
  */
 public class Position implements Serializable {
-    /**
-     * Max latitude.
-     */
-    private static final int MAX_LAT = 90;
-
-    /**
-     * 180 degrees.
-     */
-    private static final int PI_IN_DEGREES = 180;
-
-    /**
-     * 60 minutes in one degree.
-     */
-    private static final int MINUTES_IN_DEGREE = 60;
-
-    /**
-     * Number of metres in one NM which is one minute of a degree.
-     */
-    private static final int METRES_PER_NAUTICAL_MILE = 1852;
 
     /**
      * Serial.
@@ -53,9 +36,23 @@ public class Position implements Serializable {
      * Constructor.
      * @param latitudeParam the latitude.
      * @param longitudeParam the longitude.
+     * @throws IllegalArgumentException when the parameters are out of range.
      */
-    public Position(final double latitudeParam, final double longitudeParam) {
+    public Position(final double latitudeParam, final double longitudeParam) throws IllegalArgumentException {
         super();
+        if (latitudeParam > Constants.MAX_LAT) {
+            throw new IllegalArgumentException("latitude is greater than " + Constants.MAX_LAT);
+        }
+        if (latitudeParam < Constants.MIN_LAT) {
+            throw new IllegalArgumentException("latitude is less than " + Constants.MIN_LAT);
+        }
+        if (longitudeParam > Constants.MAX_LONG) {
+            throw new IllegalArgumentException("longitude is greater than " + Constants.MAX_LONG);
+        }
+        if (longitudeParam < Constants.MIN_LONG) {
+            throw new IllegalArgumentException("longitude is less than " + Constants.MIN_LONG);
+        }
+
         this.latitude = latitudeParam;
         this.longitude = longitudeParam;
     }
@@ -69,8 +66,16 @@ public class Position implements Serializable {
 
     /**
      * @param latitudeParam the latitude to set.
+     * @throws IllegalArgumentException when the parameter is out of range.
      */
     public void setLatitude(final double latitudeParam) {
+        if (latitudeParam > Constants.MAX_LAT) {
+            throw new IllegalArgumentException("latitude is greater than " + Constants.MAX_LAT);
+        }
+        if (latitudeParam < Constants.MIN_LAT) {
+            throw new IllegalArgumentException("latitude is less than " + Constants.MIN_LAT);
+        }
+
         this.latitude = latitudeParam;
     }
 
@@ -83,8 +88,16 @@ public class Position implements Serializable {
 
     /**
      * @param longitudeParam the longitude to set.
+     * @throws IllegalArgumentException when the parameter is out of range.
      */
     public void setLongitude(final double longitudeParam) {
+        if (longitudeParam > Constants.MAX_LONG) {
+            throw new IllegalArgumentException("longitude is greater than " + Constants.MAX_LONG);
+        }
+        if (longitudeParam < Constants.MIN_LONG) {
+            throw new IllegalArgumentException("longitude is less than " + Constants.MIN_LONG);
+        }
+
         this.longitude = longitudeParam;
     }
 
@@ -109,7 +122,7 @@ public class Position implements Serializable {
     public double diffLong(final Position p2) throws IllegalArgumentException {
         if (p2 == null) throw new IllegalArgumentException("p2 is null");
 
-        return Math.abs(this.getLongitude() - p2.getLongitude());
+        return Math.abs(this.getLongitude() - p2.getLongitude()) % Constants.MAX_LONG;
     }
 
     /**
@@ -120,15 +133,11 @@ public class Position implements Serializable {
      */
     public double distanceTo(final Position p2) throws IllegalArgumentException {
         if (p2 == null) throw new IllegalArgumentException("p2 is null");
-        if (this.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p1.latitude is greater than 90");
-        if (this.getLatitude() < -MAX_LAT) throw new IllegalArgumentException("p1.latitude is less than 90");
-        if (p2.getLatitude() > MAX_LAT) throw new IllegalArgumentException("p2.latitude is greater than 90");
-        if (p2.getLatitude() < -MAX_LAT) throw new IllegalArgumentException("p2.latitude is less than 90");
 
         // cos(c) = cos(a)*cos(b) + sin(a)*sin(b)*cos(C)
-        double a = toRadians(MAX_LAT - this.getLatitude());
-        double b = toRadians(MAX_LAT - p2.getLatitude());
-        double angleC = toRadians(this.getLongitude() - p2.getLongitude());
+        double a = toRadians(Constants.MAX_LAT - this.getLatitude());
+        double b = toRadians(Constants.MAX_LAT - p2.getLatitude());
+        double angleC = toRadians(Math.abs(this.getLongitude() - p2.getLongitude()) % Constants.MAX_LONG);
         double cosc =
                 (
                     Math.cos(a) * Math.cos(b)
@@ -142,14 +151,14 @@ public class Position implements Serializable {
     }
 
     public static double toRadians(final double angleInDegrees) {
-        return (angleInDegrees / PI_IN_DEGREES) * Math.PI;
+        return (angleInDegrees / Constants.PI_IN_DEGREES) * Math.PI;
     }
 
     public static double toDegrees(final double angleInRadians) {
-        return (angleInRadians / Math.PI) * PI_IN_DEGREES;
+        return (angleInRadians / Math.PI) * Constants.PI_IN_DEGREES;
     }
 
     public static double convertDegreesToMetres(final double angleInDegrees) {
-        return angleInDegrees * MINUTES_IN_DEGREE * METRES_PER_NAUTICAL_MILE;
+        return angleInDegrees * Constants.MINUTES_IN_DEGREE * Constants.METRES_PER_NAUTICAL_MILE;
     }
 }

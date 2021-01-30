@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ilecreurer.drools.samples.sample2.conf.AreaProperties;
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
 import com.ilecreurer.drools.samples.sample2.service.CollisionService;
 import com.ilecreurer.drools.samples.sample2.service.CollisionServiceException;
@@ -40,6 +41,9 @@ public class PositionEventController {
      * Logger.
      */
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(PositionEventController.class);
+
+    @Autowired
+    private AreaProperties areaProperties;
 
     /**
      * Collision service.
@@ -124,6 +128,9 @@ public class PositionEventController {
             long deltaLocal = 0;
             int registersLocal = 0;
 
+            int registersInserted = 0;
+            int registersTotal = 0;
+
             String[] ar;
             String line;
             List<PositionEvent> positionEvents = new ArrayList<PositionEvent>();
@@ -143,15 +150,15 @@ public class PositionEventController {
                 // CHECKSTYLE:ON
 
                 positionEvents.add(pe);
+                registersTotal++;
 
                 if (positionEvents.size() >= Constants.MAX_POSITION_EVENTS_SIZE) {
-                    collisionService.insertPositionEvents(positionEvents);
+                    registersInserted = collisionService.insertPositionEvents(positionEvents);
                     positionEvents.clear();
-                }
-                registers++;
-                registersLocal++;
 
-                if (registers % Constants.REGISTERS_LOG_BLOCK_SIZE == 0) {
+                    registers = registers + registersInserted;
+                    registersLocal = registersLocal + registersInserted;
+
                     t1 = System.currentTimeMillis();
                     delta = t1 - t0;
 
@@ -170,8 +177,11 @@ public class PositionEventController {
                 }
             }
 
-            collisionService.insertPositionEvents(positionEvents);
+            registersInserted = collisionService.insertPositionEvents(positionEvents);
             positionEvents.clear();
+
+            registers = registers + registersInserted;
+            registersLocal = registersLocal + registersInserted;
 
             t1 = System.currentTimeMillis();
             delta = t1 - t0;
@@ -186,7 +196,7 @@ public class PositionEventController {
                     ((float) registers / (float) delta) * Constants.MILLIS_IN_SECOND
             );
 
-            LOGGER.debug("inserted {} registers", registers);
+            LOGGER.info("inserted {} registers out of {}", registers, registersTotal);
 
         } catch (IOException e) {
             return new ResponseEntity<>(new ResponseMessage("Failed to read file",

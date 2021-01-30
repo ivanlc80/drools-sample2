@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.ilecreurer.drools.samples.sample2.conf.AreaProperties;
 import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntity;
 import com.ilecreurer.drools.samples.sample2.entity.PositionEventEntityRepository;
 import com.ilecreurer.drools.samples.sample2.event.PositionEvent;
@@ -54,6 +55,9 @@ public class CollisionServiceImpl implements CollisionService {
      * SimpleDateFormat object.
      */
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm:ss.SSSZ");
+
+    @Autowired
+    private AreaProperties areaProperties;
 
     /**
      * PositionEventEntityRepository object.
@@ -96,7 +100,12 @@ public class CollisionServiceImpl implements CollisionService {
     void onStart() throws CollisionServiceException {
         try {
             state = CollisionServiceState.STARTING;
-            LOGGER.debug("CollisionServiceImpl is starting...");
+            LOGGER.info("CollisionServiceImpl is starting...");
+
+            LOGGER.info("min latitude: {}", areaProperties.getMinLatitude());
+            LOGGER.info("max latitude: {}", areaProperties.getMaxLatitude());
+            LOGGER.info("min longitude: {}", areaProperties.getMinLongitude());
+            LOGGER.info("max longitude: {}", areaProperties.getMaxLongitude());
 
             LOGGER.info("Creating kieSession...");
             this.kieSession = kieContainer.newKieSession("ksessionceprules");
@@ -203,11 +212,12 @@ public class CollisionServiceImpl implements CollisionService {
     /**
      * Method to insert position events.
      * @param positionEvents a list of PositionEvent objects.
+     * @return number of events inserted into the ksession.
      * @throws CollisionServiceException when the insertion fails.
      * @throws IllegalArgumentException when the positionEvents is invalid.
      */
     @Override
-    public void insertPositionEvents(final List<PositionEvent> positionEvents)
+    public int insertPositionEvents(final List<PositionEvent> positionEvents)
             throws CollisionServiceException, IllegalArgumentException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entering insertPositionEvents...");
@@ -220,13 +230,21 @@ public class CollisionServiceImpl implements CollisionService {
                 && !state.equals(CollisionServiceState.READY))
             throw new CollisionServiceException("Service is in state:" + this.state);
 
+        int registersInserted = 0;
         try {
             long fc = this.entryPoint.getFactCount();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("fc: {}", fc);
             }
             for (PositionEvent positionEvent: positionEvents) {
+                if (!isPositionEventInArea(positionEvent)) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Skipping {}", positionEvent.getIdEvent());
+                    }
+                    continue;
+                }
                 entryPoint.insert(positionEvent);
+                registersInserted++;
 
                 long advanceTime = positionEvent.getTimestamp().getTime() - clock.getCurrentTime();
                 if (advanceTime > 0) {
@@ -255,6 +273,23 @@ public class CollisionServiceImpl implements CollisionService {
         } catch (Exception e) {
             throw new CollisionServiceException("Error during fact insert", e);
         }
+
+        return registersInserted;
     }
 
+    /**
+     * Method to determine if the positionEvent belongs to the configured area.
+     * @param positionEvent the PositionEvent param.
+     * @return boolean indicating whether the position event belongs to the configured area or not.
+     * @throws IllegalArgumentException when the positionEvent para is invalid.
+     */
+    private boolean isPositionEventInArea(final PositionEvent positionEvent) throws IllegalArgumentException {
+        if (positionEvent == null) {
+            throw new IllegalArgumentException("positionEvent is null");
+        }
+        return areaProperties.getMinLatitude() <= positionEvent.getLatitude()
+                && positionEvent.getLatitude() <= areaProperties.getMaxLatitude()
+                && areaProperties.getMinLongitude() <= positionEvent.getLongitude()
+                && positionEvent.getLongitude() <= areaProperties.getMaxLongitude();
+    }
 }
