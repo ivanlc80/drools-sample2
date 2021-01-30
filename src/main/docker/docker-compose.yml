@@ -4,6 +4,10 @@ services:
     image: ilecreurer/drools-sample2/postgresql:1.0.0
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/droolssample2db
+      - SPRING_DATASOURCE_USERNAME=postgres_u
+      - SPRING_DATASOURCE_PASSWORD=postgres_p
     depends_on:
       - dbpostgresql
 
