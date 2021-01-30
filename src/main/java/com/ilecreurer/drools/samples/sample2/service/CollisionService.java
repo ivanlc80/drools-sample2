@@ -20,9 +20,10 @@ public interface CollisionService {
     /**
      * Method to insert position events.
      * @param positionEvents a list of PositionEvent objects.
+     * @return number of events inserted into the ksession.
      * @throws CollisionServiceException when the insertion fails.
      * @throws IllegalArgumentException when the list of position events is invalid.
      */
-    void insertPositionEvents(List<PositionEvent> positionEvents)
+    int insertPositionEvents(List<PositionEvent> positionEvents)
             throws CollisionServiceException, IllegalArgumentException;
 }

@@ -24,3 +24,11 @@ spec:
           value: postgres_u
         - name: SPRING_DATASOURCE_PASSWORD
           value: postgres_p
+        - name: AREA_MINLATITUDE
+          value: "40"
+        - name: AREA_MAXLATITUDE
+          value: "90"
+        - name: AREA_MINLONGITUDE
+          value: "-100"
+        - name: AREA_MAXLONGITUDE
+          value: "-50"

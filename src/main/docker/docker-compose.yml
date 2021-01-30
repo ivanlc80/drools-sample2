@@ -8,6 +8,10 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/droolssample2db
       - SPRING_DATASOURCE_USERNAME=postgres_u
       - SPRING_DATASOURCE_PASSWORD=postgres_p
+      - AREA_MINLATITUDE=40
+      - AREA_MAXLATITUDE=90
+      - AREA_MINLONGITUDE=-100
+      - AREA_MAXLONGITUDE=-50
     depends_on:
       - dbpostgresql
 
