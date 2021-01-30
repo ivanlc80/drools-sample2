@@ -18,13 +18,9 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: POSTGRES_HOST
-          value: droolssample2db
-        - name: POSTGRES_PORT
-          value: "5432"
-        - name: POSTGRES_DATABASE
-          value: droolssample2db
-        - name: POSTGRES_USER
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://dbpostgresql:5432/droolssample2db
+        - name: SPRING_DATASOURCE_USERNAME
           value: postgres_u
-        - name: POSTGRES_PASSWORD
+        - name: SPRING_DATASOURCE_PASSWORD
           value: postgres_p

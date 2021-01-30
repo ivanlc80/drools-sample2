@@ -131,6 +131,17 @@ cd src/main/docker
 docker-compose -f docker-compose.yml up
 ```
 
+Note that the database configuration "set" within the config file is overriden by the environment variables passed to the container:
+
+```
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/droolssample2db
+      - SPRING_DATASOURCE_USERNAME=postgres_u
+      - SPRING_DATASOURCE_PASSWORD=postgres_p
+```
+
+See [https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config) to see how this is done.
+
 
 ## Run on Kubernetes
 
@@ -270,6 +281,19 @@ kubectl create -f ./src/main/k8s/droolssample2-deployment.yaml
 deployment.apps/droolssample2 created
 ```
 
+Note that the database configuration "set" within the config file is overriden by the environment variables passed to the container in the yaml file:
+
+```
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://dbpostgresql:5432/droolssample2db
+        - name: SPRING_DATASOURCE_USERNAME
+          value: postgres_u
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: postgres_p
+```
+
+See [https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config) to see how this is done.
 
 ```
 kubectl logs pod/droolssample2-fdf9ddd5b-ffkmx
